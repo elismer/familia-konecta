@@ -40,6 +40,7 @@
     "build": "webpack --mode production",
     "now-build": "npm run build",
     "lint": "standard",
+    "lint-fix": "standard --fix",
     "dev": "webpack-dev-server --history-api-fallback",
     "serve:dev": "webpack --mode development && npx serve dist -s",
     "test": "cypress run",
@@ -47,14 +48,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:elismer/familia-konecta.git"
+    "url": "git+ssh://git@github.com/midudev/curso-platzi-react-avanzado.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/elismer/familia-konecta/issues"
+    "url": "https://github.com/midudev/curso-platzi-react-avanzado/issues"
   },
-  "homepage": "https://github.com/elismer/familia-konecta#readme",
+  "homepage": "https://github.com/midudev/curso-platzi-react-avanzado#readme",
   "eslintConfig": {
     "parser": "babel-eslint",
     "extends": "./node_modules/standard/eslintrc.json"
