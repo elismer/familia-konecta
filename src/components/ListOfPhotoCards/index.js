@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react'
-import { List, Item, FavList, Wrapper } from './styles'
+import React from 'react'
+import { List, Item} from './styles'
 import { PhotoCard } from '../PhotoCard'
 
 export const ListOfPhotoCardsComponent = ({ data: { photos = [] } }) => {

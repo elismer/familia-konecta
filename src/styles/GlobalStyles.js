@@ -19,6 +19,7 @@ export const GlobalStyles = createGlobalStyle`
     height: 100vh;
     overscroll-behavior: none;
     width: 100%;
+    margin: 0px;
   }
 
   #app {
