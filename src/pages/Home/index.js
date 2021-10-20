@@ -2,6 +2,7 @@ import React, { Fragment } from 'react'
 import { ListOfPhotoCards } from '../../containers/ListOfPhotoCards'
 import { Helmet } from 'react-helmet'
 import { FavList, Wrapper } from './styles'
+import { ListOfMostVoted } from '../../containers/ListOfMostVoted'
 
 const HomePage = ({ id }) => {
   return (
@@ -12,7 +13,7 @@ const HomePage = ({ id }) => {
       <Wrapper>
         <ListOfPhotoCards categoryId={id} />
         <FavList>
-          <h1> list here!</h1>
+          <ListOfMostVoted/>
         </FavList>
       </Wrapper>
     </Fragment>
