@@ -1,15 +1,20 @@
 import React, { Fragment } from 'react'
 import { ListOfPhotoCards } from '../../containers/ListOfPhotoCards'
 import { Helmet } from 'react-helmet'
+import { FavList, Wrapper } from './styles'
 
 const HomePage = ({ id }) => {
   return (
     <Fragment>
       <Helmet>
-        <title>Petgram - Tu app de fotos de mascotas</title>
-        <meta name='description' content='Con Petgram puedes encontrar fotos de animales domésticos muy fácilmente' />
+        <title>Familia Konecta</title>
       </Helmet>
-      <ListOfPhotoCards categoryId={id} />
+      <Wrapper>
+        <ListOfPhotoCards categoryId={id} />
+        <FavList>
+          <h1> list here!</h1>
+        </FavList>
+      </Wrapper>
     </Fragment>
   )
 }
