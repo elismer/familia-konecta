@@ -1,7 +1,10 @@
 import styled from 'styled-components'
+import logo from '../../assets/logo.svg' 
 
-export const Svg = styled.svg`
-  width: 220px;
-  margin-top: -30px;
-  margin-left: -10px;
+
+export const LogoImage = styled.img.attrs(() => ({
+  src: logo
+}))`
+width: 10rem;
+height: 5rem;
 `
