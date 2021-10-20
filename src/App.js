@@ -1,18 +1,11 @@
 import React from 'react'
 import { Router } from '@reach/router'
-
 import { GlobalStyles } from './styles/GlobalStyles'
-
 import { Home } from './pages/Home'
 import { Detail } from './pages/Detail'
-// import { Favs } from './pages/Favs'
-// import { Profile } from './pages/Profile'
 import { NotRegistered } from './pages/NotRegistered'
-
-import { Logo } from './components/Logo'
-import { NavBar } from './components/NavBar'
-
 import Context from './Context'
+import { Banner } from './components/Banner'
 
 const Favs = React.lazy(() => import('./pages/Favs'))
 const Profile = React.lazy(() => import('./pages/Profile'))
@@ -20,7 +13,7 @@ const Profile = React.lazy(() => import('./pages/Profile'))
 export default function () {
   return (
     <React.Suspense fallback={<div />}>
-      <Logo />
+      <Banner />
       <GlobalStyles />
       <Router>
         <Home path='/' />
@@ -42,7 +35,6 @@ export default function () {
               </Router>
         }
       </Context.Consumer>
-      <NavBar />
     </React.Suspense>
   )
 }
