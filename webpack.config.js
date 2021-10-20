@@ -8,6 +8,10 @@ module.exports = {
     filename: 'app.bundle.js',
     publicPath: '/'
   },
+  devtool: false,
+  performance: {
+    hints: false
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/index.html'
@@ -59,7 +63,15 @@ module.exports = {
             ]
           }
         }
-      }
+      },
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: 'svg-url-loader',
+          },
+        ],
+      },
     ]
   }
 }
