@@ -7,6 +7,7 @@ import { NotRegistered } from './pages/NotRegistered'
 import Context from './Context'
 import { Banner } from './components/Banner'
 import TermConditions from './pages/TermsConditions'
+import { ApprovePhotos } from './containers/ApprovePhotos'
 
 export default function () {
   return (
@@ -25,6 +26,7 @@ export default function () {
                   <Home path='/pet/:id' />
                   <Detail path='/detail/:id' />
                   <TermConditions path='/ttcc' />
+                  <ApprovePhotos path='/approve'/>
                 </Router>
               </>
               : <Router>
