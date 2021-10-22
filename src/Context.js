@@ -8,13 +8,15 @@ const Provider = ({ children }) => {
 
   const value = {
     isAuth,
-    activateAuth: (token) => {
+    activateAuth: ({token, userId}) => {
       setIsAuth(true)
+      window.sessionStorage.setItem('userId', userId)
       window.sessionStorage.setItem('token', token)
     },
 
     removeAuth: () => {
       setIsAuth(false)
+      window.sessionStorage.removeItem('userId')
       window.sessionStorage.removeItem('token')
     }
   }

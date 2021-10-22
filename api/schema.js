@@ -45,6 +45,11 @@ const typeDefs = gql`
     topTen: [Photo]
   }
 
+  type LoginResponse{
+    token: String!
+    userId: String!
+  }
+
   input LikePhoto {
     id: ID!
   }
@@ -74,7 +79,7 @@ const typeDefs = gql`
     removePhoto(input: ID!): Boolean
     removeComment(input: CommentUpload!): Boolean
     signup(input: UserCredentials!): String
-    login(input: UserCredentials!): String
+    login(input: UserCredentials!): LoginResponse
   }
 `
 
@@ -165,13 +170,13 @@ const resolvers = {
       if (!valid) {
         throw new Error('Incorrect password')
       }
-
-      // return json web token
-      return jsonwebtoken.sign(
+      const token = jsonwebtoken.sign(
         { id: user._id, dni, nombre: user.nombre, apellido: user.apellido },
         jwtSecret,
-        { expiresIn: '1d' }
-      )
+        { expiresIn: '1d' })
+      // return json web token
+      console.log({token})
+      return {token, userId:user._id}
     },
 
     async addPhoto (parent, {input:{ file, description }}, context) {

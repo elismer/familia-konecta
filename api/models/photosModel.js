@@ -103,7 +103,7 @@ class PhotosModel {
     let myPhoto = {}
     if (ranking > 9) {
       myPhoto = result[ranking]
-      myPhoto.pos = ranking
+      myPhoto.pos = ranking+1
     }
     const firstTen = result.slice(0, 10).map((photo, index) => ({ ...photo, pos: index + 1 }))
     return myPhoto.ranking ? [...firstTen, ...[myPhoto]] : firstTen

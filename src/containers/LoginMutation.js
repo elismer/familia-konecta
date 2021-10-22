@@ -4,7 +4,10 @@ import { gql } from 'apollo-boost'
 
 const mutation = gql`
 mutation login($input: UserCredentials!) {
-  login(input: $input)
+  login(input: $input){
+    token
+    userId
+  }
 }
 `
 
