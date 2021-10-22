@@ -1,49 +1,63 @@
-const db = require('../adapter')
 const crypto = require('crypto')
 const uuidv1 = require('uuid/v1')
 const bcrypt = require('bcrypt')
+const MongoLib = require('../lib/mongo')
 
-function addFav ({ id, photoId }) {
-  db.get('users')
-    .find({ id })
-    .update('favs', (favs) => [...favs, photoId])
-    .write()
-}
-
-function removeFav ({ id, photoId }) {
-  db.get('users')
-    .find({ id })
-    .update('favs', (favs) => favs.filter((fav) => fav !== photoId))
-    .write()
-}
-
-function hasFav ({ id, photoId }) {
-  const user = db.get('users').find({ id }).value()
-  const hasFav = user.favs.includes(photoId)
-  return hasFav
-}
-
-async function create ({ email, password }) {
-  const avatarHash = crypto.createHash('md5').update(email).digest('hex')
-  const avatar = `https://gravatar.com/avatar/${avatarHash}`
-
-  // Create a user
-  const user = {
-    id: uuidv1(), // with a unique user id
-    password: await bcrypt.hash(password, 10), // with the encrypted password
-    favs: [],
-    avatar,
-    email
+class UserModel {
+  constructor () {
+    this.collection = 'users'
+    this.mongo = new MongoLib()
   }
 
-  // Write in db.json
-  db.get('users').push(user).write()
+  async addFav ({ id, photoId }) {
+    await this.mongo.update(
+      this.collection,
+      { id },
+      { $push: { favs: photoId } }
+    )
+  }
 
-  return user
+  async removeFav ({ id, photoId }) {
+    await this.mongo.update(
+      this.collection,
+      { id },
+      { $pull: { favs: photoId } }
+    )
+  }
+
+  async hasFav ({ id, photoId }) {
+    const user = await this.mongo.getAll(
+      this.collection,
+      { id },
+      { favs: { $elemMatch: { photoId } } }
+    )
+    const hasFav = user.favs
+    return !!hasFav
+  }
+
+  async create ({ dni, email, password }) {
+    const avatarHash = crypto.createHash('md5').update(email).digest('hex')
+    const avatar = `https://gravatar.com/avatar/${avatarHash}`
+
+    // Create a user
+    const user = {
+      id: uuidv1(), // with a unique user id
+      password: await bcrypt.hash(password, 10), // with the encrypted password
+      favs: [],
+      avatar,
+      email,
+      dni
+    }
+
+    // Write in db.json
+    // db.get('users').push(user).write()
+    await this.mongo.create(this.collection, user)
+    return user
+  }
+
+  async find ({ dni }) {
+    return this.mongo.get(this.collection, { dni })
+  }
 }
 
-function find ({ email }) {
-  return db.get('users').find({ email }).value()
-}
-
-module.exports = { create, addFav, hasFav, removeFav, find }
+module.exports = UserModel
