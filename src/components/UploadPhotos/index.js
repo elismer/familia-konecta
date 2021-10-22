@@ -31,7 +31,7 @@ export const UploadPhotos = () => {
 
   const handleChange = ({target}) => {
     readURI(target)
-    setFile(target.files && target.files)
+    setFile(target.files && target.files[0])
   }
 
   const clearImage = () => {

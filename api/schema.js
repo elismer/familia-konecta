@@ -56,7 +56,7 @@ const typeDefs = gql`
 
   input PhotoUpload {
     description: String
-    file: [Upload]!
+    file: Upload!
   }
 
   input CommentUpload {
@@ -174,7 +174,7 @@ const resolvers = {
       )
     },
 
-    async addPhoto (parent, { file, description }, context) {
+    async addPhoto (parent, {input:{ file, description }}, context) {
       const { _id } = await checkIsUserLogged(context)
       console.log(file)
       const { createReadStream } = await file
@@ -185,7 +185,7 @@ const resolvers = {
 
       // This is purely for demonstration purposes and will overwrite the
       // local-file-output.txt in the current working directory on EACH upload.
-      const out = require('fs').createWriteStream(path.join(__dirname, `../images/`, `${_id}.jpg`))
+      const out = require('fs').createWriteStream(path.join(__dirname, `/images/`, `${_id}.jpg`))
       stream.pipe(out)
       const finishedPromise = promisify(finished)
       try {
