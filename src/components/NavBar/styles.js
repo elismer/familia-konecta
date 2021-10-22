@@ -27,7 +27,6 @@ export const Link = styled(LinkRouter)`
 
 export const Nav = styled.nav`
   align-items: center;
-  background: #fcfcfc;
   display: flex;
   height: 50px;
   justify-content: space-around;

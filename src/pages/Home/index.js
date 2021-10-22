@@ -11,7 +11,7 @@ const HomePage = ({ id }) => {
         <title>Familia Konecta</title>
       </Helmet>
       <Wrapper>
-        <ListOfPhotoCards categoryId={id} />
+        <ListOfPhotoCards />
         <FavList>
           <ListOfMostVoted />
         </FavList>
