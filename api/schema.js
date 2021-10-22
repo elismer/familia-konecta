@@ -124,7 +124,7 @@ const resolvers = {
           await userModel.addFav({ _id, photoId })
         }
         // get the updated photos model
-        const actualPhoto = await photosModel.find({ id: photoId })
+        const actualPhoto = await photosModel.find({ id: photoId, favs: hasFav ? [] : [photoId]  })
         return actualPhoto
       } catch (error) {
         console.error(error)
