@@ -7,8 +7,7 @@ import { ListOfFavs } from '../components/ListOfFavs'
 const query = gql`
 query getFavs {
   favs {
-    id
-    categoryId
+    id    
     src
     likes
     userId
