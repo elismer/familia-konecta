@@ -3,9 +3,8 @@ import React from 'react'
 import { Wrapper, Title, Item } from './styles'
 import { PhotoCard } from '../PhotoCard'
 
-export const ListOfMostVotedContainer = ({ data: { photos = [] } }) => {
-
-  const photoList = photos.length ? photos.slice(0, 3) : []
+export const ListOfMostVotedContainer = ({ data: { topTen = [] } }) => {
+  const photoList = topTen
   return (
     <Wrapper>
       <Title>

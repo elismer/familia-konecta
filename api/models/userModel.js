@@ -9,30 +9,30 @@ class UserModel {
     this.mongo = new MongoLib()
   }
 
-  async addFav ({ id, photoId }) {
+  async addFav ({ _id, photoId }) {
     await this.mongo.update(
       this.collection,
-      { id },
-      { $push: { favs: photoId } }
+      _id,
+      { '$push': { 'favs': photoId } }
     )
   }
 
-  async removeFav ({ id, photoId }) {
+  async removeFav ({ _id, photoId }) {
     await this.mongo.update(
       this.collection,
-      { id },
-      { $pull: { favs: photoId } }
+      _id,
+      { '$pull': { 'favs': photoId } }
     )
   }
 
-  async hasFav ({ id, photoId }) {
-    const user = await this.mongo.getAll(
-      this.collection,
-      { id },
-      { favs: { $elemMatch: { photoId } } }
+  async hasFav ({ dni, photoId }) {
+    console.log({ dni, photoId })
+    const user = await this.mongo.aggregate(
+      { collection: this.collection,
+        aggregation: [ { $match: { $and: [{ dni }, { favs: photoId }] } } ] }
     )
-    const hasFav = user.favs
-    return !!hasFav
+    const hasFav = user[0]?.favs
+    return hasFav
   }
 
   async create ({ dni, email, password }) {

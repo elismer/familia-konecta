@@ -17,7 +17,6 @@ const typeDefs = gql`
 
   type User {
     id: ID
-    avatar: String
     nombre: String
     apellido: String
     dni: Int
@@ -36,6 +35,7 @@ const typeDefs = gql`
     likes: Int
     liked: Boolean
     userId: ID
+    pos: Int
     description: String
     comments: [Comment]
     approved: Boolean
@@ -45,6 +45,7 @@ const typeDefs = gql`
     favs: [Photo]
     photos(approved: Boolean): [Photo]
     photo(id: ID!): Photo
+    topTen: [Photo]
   }
 
   input LikePhoto {
@@ -81,21 +82,21 @@ const typeDefs = gql`
   }
 `
 
-function checkIsUserLogged (context) {
-  const { dni, id } = context
+async function checkIsUserLogged (context) {
+  const { dni } = context
   // check if the user is logged
-  if (!id) throw new Error('you must be logged in to perform this action')
+  if (!dni) throw new Error('you must be logged in to perform this action')
   // find the user and check if it exists
-  const user = userModel.find({ dni })
+  const user = await userModel.find({ dni })
   // if user doesnt exist, throw an error
   if (!user) throw new Error('user does not exist')
   return user
 }
 
-function tryGetFavsFromUserLogged (context) {
+async function tryGetFavsFromUserLogged (context) {
   try {
-    const { dni } = checkIsUserLogged(context)
-    const user = userModel.find({ dni })
+    const { dni } = await checkIsUserLogged(context)
+    const user = await userModel.find({ dni })
     return user.favs
   } catch (e) {
     return []
@@ -104,31 +105,32 @@ function tryGetFavsFromUserLogged (context) {
 
 const resolvers = {
   Mutation: {
-    likePhoto: (_, { input }, context) => {
-      const { id: userId } = checkIsUserLogged(context)
+    async likePhoto (_, { input }, context) {
+      const { dni, _id } = await checkIsUserLogged(context)
 
       // find the photo by id and throw an error if it doesn't exist
       const { id: photoId } = input
-      const photo = photosModel.find({ id: photoId })
+      const photo = await photosModel.find({ id: photoId })
       if (!photo) {
         throw new Error(`Couldn't find photo with id ${photoId}`)
       }
 
-      const hasFav = userModel.hasFav({ id: userId, photoId })
-
-      if (hasFav) {
-        photosModel.removeLike({ id: photoId })
-        userModel.removeFav({ id: userId, photoId })
-      } else {
-        // put a like to the photo and add the like to the user database
-        photosModel.addLike({ id: photoId })
-        userModel.addFav({ id: userId, photoId })
+      const hasFav = await userModel.hasFav({ dni, photoId })
+      try {
+        if (hasFav) {
+          await photosModel.removeLike({ id: photoId })
+          await userModel.removeFav({ _id, photoId })
+        } else {
+          // put a like to the photo and add the like to the user database
+          await photosModel.addLike({ id: photoId })
+          await userModel.addFav({ _id, photoId })
+        }
+        // get the updated photos model
+        const actualPhoto = await photosModel.find({ id: photoId, favs: hasFav ? [] : [photoId] })
+        return actualPhoto
+      } catch (error) {
+        console.error(error)
       }
-
-      // get the updated photos model
-      const actualPhoto = photosModel.find({ id: photoId })
-
-      return actualPhoto
     },
     // Handle user signup
     async signup (_, { input }) {
@@ -169,14 +171,14 @@ const resolvers = {
 
       // return json web token
       return jsonwebtoken.sign(
-        { id: user.id, dni },
+        { id: user._id, dni, nombre: user.nombre, apellido: user.apellido },
         jwtSecret,
         { expiresIn: '1d' }
       )
     },
 
     async addPhoto (parent, { file, userId, description }, context) {
-      const { dni } = checkIsUserLogged(context)
+      const { dni } = await checkIsUserLogged(context)
       const { createReadStream } = await file
 
       // Invoking the `createReadStream` will return a Readable Stream.
@@ -193,48 +195,52 @@ const resolvers = {
     },
 
     async addComment (_, { photoId, userId, comment }, context) {
-      checkIsUserLogged(context)
+      await checkIsUserLogged(context)
       const newComment = await photosModel.addComment({ id: photoId, userId, comment })
       return newComment
     },
 
     async approvePhoto (_, { photoId }, context) {
-      checkIsUserLogged(context)
+      await checkIsUserLogged(context)
       await photosModel.approvePhoto({ id: photoId })
       return true
     },
 
     async approveComment (_, { photoId, userId, comment }, context) {
-      checkIsUserLogged(context)
+      await checkIsUserLogged(context)
       await photosModel.approveComment({ id: photoId, userId, comment })
       return true
     },
 
     async removePhoto (_, { photoId, userId }, context) {
-      checkIsUserLogged(context)
+      await checkIsUserLogged(context)
       await photosModel.removePhoto({ id: photoId, userId })
       return true
     },
 
     async removeComment (_, { photoId, userId, comment }, context) {
-      checkIsUserLogged(context)
+      await checkIsUserLogged(context)
       await photosModel.removeComment({ id: photoId, userId, comment })
       return true
     }
   },
   Query: {
-    favs (_, __, context) {
-      const { email } = checkIsUserLogged(context)
+    async favs (_, __, context) {
+      const { email } = await checkIsUserLogged(context)
       const { favs } = userModel.find({ email })
       return photosModel.list({ ids: favs, favs })
     },
-    photo (_, { id }, context) {
-      const favs = tryGetFavsFromUserLogged(context)
+    async photo (_, { id }, context) {
+      const favs = await tryGetFavsFromUserLogged(context)
       return photosModel.find({ id, favs })
     },
-    photos (_, { approved }, context) {
-      const favs = tryGetFavsFromUserLogged(context)
+    async photos (_, { approved }, context) {
+      const favs = await tryGetFavsFromUserLogged(context)
       return photosModel.list({ approved, favs })
+    },
+    async topTen (_, __, context) {
+      const { _id } = await checkIsUserLogged(context)
+      return photosModel.topTen({ userId: _id })
     }
   },
   User: {

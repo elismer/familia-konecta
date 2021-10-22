@@ -20,6 +20,7 @@
     "react-helmet": "^5.2.1",
     "react-icons": "^3.7.0",
     "react-router-dom": "^5.3.0",
+    "react-tooltip": "^4.2.21",
     "styled-components": "^4.2.0",
     "webpack-pwa-manifest": "^4.0.0",
     "workbox-webpack-plugin": "^4.3.1"

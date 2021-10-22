@@ -67,7 +67,7 @@ class MongoLib {
       .then((db) => {
         return db
           .collection(collection)
-          .updateOne({ id: ObjectId(id) }, data, { upsert: true })
+          .updateOne({ _id: ObjectId(id) }, data, { upsert: true })
       })
       .then((result) => result.upsertedId || id)
   }
