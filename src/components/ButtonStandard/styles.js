@@ -8,7 +8,7 @@ export const ButtonTemplate = styled.button`
     gap: 1fr;
     align-items: center;
     padding: .5rem 1rem;
-    min-width: min(34rem, 95%);
+    min-width: 40%;
     height: 2.5rem;
     background: blue ;
     border-radius: .5rem;
