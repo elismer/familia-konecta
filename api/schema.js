@@ -2,19 +2,16 @@ const UserModel = require('./models/userModel')
 const PhotosModel = require('./models/photosModel')
 const { gql } = require('apollo-server-express')
 const { finished } = require('stream')
+const path = require('path')
 const jsonwebtoken = require('jsonwebtoken')
 const { config: { jwtSecret } } = require('./config')
-
+const { promisify } = require('util')
+const { GraphQLUpload } = require('graphql-upload')
 const userModel = new UserModel()
 const photosModel = new PhotosModel()
 
 const typeDefs = gql`
-  type File {
-    filename: String!
-    mimetype: String!
-    encoding: String!
-  }
-
+  scalar Upload
   type User {
     id: ID
     nombre: String
@@ -58,9 +55,8 @@ const typeDefs = gql`
   }
 
   input PhotoUpload {
-    userId: ID
     description: String
-    file: Upload!
+    file: [Upload]!
   }
 
   input CommentUpload {
@@ -104,6 +100,7 @@ async function tryGetFavsFromUserLogged (context) {
 }
 
 const resolvers = {
+  Upload: GraphQLUpload,
   Mutation: {
     async likePhoto (_, { input }, context) {
       const { dni, _id } = await checkIsUserLogged(context)
@@ -177,8 +174,9 @@ const resolvers = {
       )
     },
 
-    async addPhoto (parent, { file, userId, description }, context) {
-      const { dni } = await checkIsUserLogged(context)
+    async addPhoto (parent, { file, description }, context) {
+      const { _id } = await checkIsUserLogged(context)
+      console.log(file)
       const { createReadStream } = await file
 
       // Invoking the `createReadStream` will return a Readable Stream.
@@ -187,11 +185,16 @@ const resolvers = {
 
       // This is purely for demonstration purposes and will overwrite the
       // local-file-output.txt in the current working directory on EACH upload.
-      const out = require('fs').createWriteStream(`../images/${dni}.jpg`)
+      const out = require('fs').createWriteStream(path.join(__dirname, `../images/`, `${_id}.jpg`))
       stream.pipe(out)
-      await finished(out)
-      const newPhoto = await photosModel.create({ userId, description })
-      return newPhoto
+      const finishedPromise = promisify(finished)
+      try {
+        await finishedPromise(out)
+        const newPhoto = await photosModel.create({ _id, description })
+        return newPhoto
+      } catch (error) {
+        console.error(error)
+      }
     },
 
     async addComment (_, { photoId, userId, comment }, context) {
