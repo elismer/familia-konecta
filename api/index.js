@@ -25,6 +25,7 @@ require('./adapter')
 const server = new ApolloServer({
   introspection: true, // do this only for dev purposes
   playground: true, // do this only for dev purposes
+  uploads: false,
   typeDefs,
   resolvers,
   context: ({ req }) => {
@@ -43,12 +44,14 @@ const errorHandler = (err, req, res, next) => {
   res.status(status).json(err)
 }
 app.use(errorHandler)
-app.use(graphqlUploadExpress())
-server.applyMiddleware({ app, path: '/graphql' })
-
-app.get('/categories', function (req, res) {
-  res.send(categories)
+app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }))
+server.applyMiddleware({ app,
+  path: '/graphql',
+  bodyParserConfig: {
+    limit: '10mb'
+  }
 })
+
 
 if (!process.env.NOW_REGION) {
   app.listen(PORT, () => {
