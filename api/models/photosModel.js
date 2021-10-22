@@ -91,5 +91,20 @@ class PhotosModel {
       { $pull: { comments: { userId, comment } } }
     )
   }
+
+  async topTen ({ userId }) {
+    const result = await this.mongoDB.aggregate({
+      collection: this.collection,
+      aggregation: [{ $match: { approved: true } }, { $sort: { likes: -1 } }]
+    })
+    const ranking = result.findIndex(photo => photo.userId === userId)
+    let myPhoto = {}
+    if (ranking > 9) {
+      myPhoto = result[ranking]
+      myPhoto.pos = ranking
+    }
+    const firstTen = result.slice(0, 10).map((photo, index) => ({ ...photo, pos: index + 1 }))
+    return myPhoto.ranking ? [...firstTen, ...[myPhoto]] : firstTen
+  }
 }
 module.exports = PhotosModel

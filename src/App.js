@@ -19,16 +19,15 @@ export default function () {
         {
           ({ isAuth }) =>
             isAuth
-              ?
-              <>
+              ? <>
                 <Banner />
                 <Router>
                   <Home path='/' />
                   <Home path='/pet/:id' />
                   <Detail path='/detail/:id' />
                   <TermConditions path='/ttcc' />
-                  <ApprovePhotos path='/approve'/>
-                  <UploadPhotos path='/upload'/>
+                  <ApprovePhotos path='/approve' />
+                  <UploadPhotos path='/upload' />
                 </Router>
               </>
               : <Router>

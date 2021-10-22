@@ -13,7 +13,7 @@ const HomePage = ({ id }) => {
       <Wrapper>
         <ListOfPhotoCards categoryId={id} />
         <FavList>
-          <ListOfMostVoted/>
+          <ListOfMostVoted />
         </FavList>
       </Wrapper>
     </Fragment>
