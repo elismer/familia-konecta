@@ -99,11 +99,11 @@ class PhotosModel {
       collection: this.collection,
       aggregation: [{ $match: { approved: true } }, { $sort: { likes: -1 } }]
     })
-    const ranking = result.findIndex(photo => photo.userId === userId)
+    const ranking = result.findIndex(photo => userId.equals(photo.userId))
     let myPhoto = {}
     if (ranking > 9) {
       myPhoto = result[ranking]
-      myPhoto.pos = ranking+1
+      myPhoto.pos = ranking + 1
     }
     const firstTen = result.slice(0, 10).map((photo, index) => ({ ...photo, pos: index + 1 }))
     return myPhoto.ranking ? [...firstTen, ...[myPhoto]] : firstTen

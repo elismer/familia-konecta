@@ -175,7 +175,6 @@ const resolvers = {
         jwtSecret,
         { expiresIn: '1d' })
       // return json web token
-      console.log({token})
       return {token, userId:user._id}
     },
 
