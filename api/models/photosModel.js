@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb')
 const MongoLib = require('../lib/mongo')
 
 class PhotosModel {
@@ -6,21 +7,21 @@ class PhotosModel {
     this.mongoDB = new MongoLib()
   }
 
-  async find ({ _id, favs = [] }) {
-    const photo = this.mongoDB.getAll(this.collection, { _id })
+  async find ({ id, favs = [] }) {
+    const photo = await this.mongoDB.get(this.collection, { _id: ObjectId(id) })
     return {
       ...photo,
-      liked: favs.includes(_id.toString())
+      liked: favs.includes(id.toString())
     }
   }
 
-  async addLike ({ _id }) {
-    await this.mongoDB.update(this.collection, { _id }, { $inc: { likes: 1 } })
+  async addLike ({ id }) {
+    await this.mongoDB.update(this.collection, id, { '$inc': { likes: 1 } })
     return true
   }
 
-  async removeLike ({ _id }) {
-    await this.mongoDB.update(this.collection, { _id }, { $inc: { likes: -1 } })
+  async removeLike ({ id }) {
+    await this.mongoDB.update(this.collection, id, { '$inc': { likes: -1 } })
     return true
   }
 
@@ -55,7 +56,7 @@ class PhotosModel {
   async approvePhoto ({ _id }) {
     await this.mongoDB.update(
       this.collection,
-      { _id },
+      _id,
       { $set: { approved: true } }
     )
     return true
@@ -68,7 +69,7 @@ class PhotosModel {
   async addComment ({ _id, comment, userId }) {
     await this.mongoDB.update(
       this.collection,
-      { _id },
+      _id,
       { $push: { comments: { userId, comment, approved: false } } }
     )
     return true
@@ -86,7 +87,7 @@ class PhotosModel {
   async removeComment ({ _id, userId, comment }) {
     await this.mongoDB.update(
       this.collection,
-      { _id },
+      _id,
       { $pull: { comments: { userId, comment } } }
     )
   }
