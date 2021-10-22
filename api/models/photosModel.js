@@ -6,21 +6,21 @@ class PhotosModel {
     this.mongoDB = new MongoLib()
   }
 
-  async find ({ id, favs = [] }) {
-    const photo = this.mongoDB.getAll(this.collection, { id })
+  async find ({ _id, favs = [] }) {
+    const photo = this.mongoDB.getAll(this.collection, { _id })
     return {
       ...photo,
-      liked: favs.includes(id.toString())
+      liked: favs.includes(_id.toString())
     }
   }
 
-  async addLike ({ id }) {
-    await this.mongoDB.update(this.collection, { id }, { $inc: { likes: 1 } })
+  async addLike ({ _id }) {
+    await this.mongoDB.update(this.collection, { _id }, { $inc: { likes: 1 } })
     return true
   }
 
-  async removeLike ({ id }) {
-    await this.mongoDB.update(this.collection, { id }, { $inc: { likes: -1 } })
+  async removeLike ({ _id }) {
+    await this.mongoDB.update(this.collection, { _id }, { $inc: { likes: -1 } })
     return true
   }
 
@@ -36,7 +36,7 @@ class PhotosModel {
     )
     return photos.map((photo) => ({
       ...photo,
-      liked: favs.includes(photo.id.toString())
+      liked: favs.includes(photo._id.toString())
     }))
   }
 
@@ -52,41 +52,41 @@ class PhotosModel {
     return true
   }
 
-  async approvePhoto ({ id }) {
+  async approvePhoto ({ _id }) {
     await this.mongoDB.update(
       this.collection,
-      { id },
+      { _id },
       { $set: { approved: true } }
     )
     return true
   }
 
-  async removePhoto ({ id }) {
-    await this.mongoDB.delete(this.collection, id)
+  async removePhoto ({ _id }) {
+    await this.mongoDB.delete(this.collection, _id)
   }
 
-  async addComment ({ id, comment, userId }) {
+  async addComment ({ _id, comment, userId }) {
     await this.mongoDB.update(
       this.collection,
-      { id },
+      { _id },
       { $push: { comments: { userId, comment, approved: false } } }
     )
     return true
   }
 
-  async approveComment ({ id, userId, comment }) {
+  async approveComment ({ _id, userId, comment }) {
     await this.mongoDB.update(
       this.collection,
-      { id, 'comments.userId': userId, 'comments.comment': comment },
+      { _id, 'comments.userId': userId, 'comments.comment': comment },
       { $set: { 'comments.$.approved': true } }
     )
     return true
   }
 
-  async removeComment ({ id, userId, comment }) {
+  async removeComment ({ _id, userId, comment }) {
     await this.mongoDB.update(
       this.collection,
-      { id },
+      { _id },
       { $pull: { comments: { userId, comment } } }
     )
   }

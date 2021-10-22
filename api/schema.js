@@ -236,6 +236,12 @@ const resolvers = {
       const favs = tryGetFavsFromUserLogged(context)
       return photosModel.list({ approved, favs })
     }
+  },
+  User: {
+    id: (root) => root._id
+  },
+  Photo: {
+    id: (root) => root._id
   }
 }
 

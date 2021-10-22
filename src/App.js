@@ -8,32 +8,27 @@ import Context from './Context'
 import { Banner } from './components/Banner'
 import TermConditions from './pages/TermsConditions'
 
-const Favs = React.lazy(() => import('./pages/Favs'))
-const Profile = React.lazy(() => import('./pages/Profile'))
-
 export default function () {
   return (
     <React.Suspense fallback={<div />}>
-      {/* <Banner /> */}
       <GlobalStyles />
-      <Router>
-        <Home path='/' />
-        <Home path='/pet/:id' />
-        <Detail path='/detail/:id' />
-        <TermConditions path='/ttcc'/>
-      </Router>
 
       <Context.Consumer>
         {
           ({ isAuth }) =>
             isAuth
-              ? <Router>
-                <Favs path='favs' />
-                <Profile path='user' />
-              </Router>
+              ?
+              <>
+                <Banner />
+                <Router>
+                  <Home path='/' />
+                  <Home path='/pet/:id' />
+                  <Detail path='/detail/:id' />
+                  <TermConditions path='/ttcc' />
+                </Router>
+              </>
               : <Router>
-                <NotRegistered path='favs' />
-                <NotRegistered path='user' />
+                <NotRegistered path='/' />
               </Router>
         }
       </Context.Consumer>
