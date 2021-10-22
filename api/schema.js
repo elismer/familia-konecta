@@ -32,6 +32,7 @@ const typeDefs = gql`
 
   type Photo {
     id: ID
+    src: String
     likes: Int
     liked: Boolean
     userId: ID
