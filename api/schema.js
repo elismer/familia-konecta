@@ -35,6 +35,7 @@ const typeDefs = gql`
     likes: Int
     liked: Boolean
     userId: ID
+    pos: Int
     description: String
     comments: [Comment]
     approved: Boolean
@@ -44,6 +45,7 @@ const typeDefs = gql`
     favs: [Photo]
     photos(approved: Boolean): [Photo]
     photo(id: ID!): Photo
+    topTen: [Photo]
   }
 
   input LikePhoto {
@@ -94,7 +96,7 @@ async function checkIsUserLogged (context) {
 async function tryGetFavsFromUserLogged (context) {
   try {
     const { dni } = await checkIsUserLogged(context)
-    const user = userModel.find({ dni })
+    const user = await userModel.find({ dni })
     return user.favs
   } catch (e) {
     return []
@@ -124,7 +126,7 @@ const resolvers = {
           await userModel.addFav({ _id, photoId })
         }
         // get the updated photos model
-        const actualPhoto = await photosModel.find({ id: photoId, favs: hasFav ? [] : [photoId]  })
+        const actualPhoto = await photosModel.find({ id: photoId, favs: hasFav ? [] : [photoId] })
         return actualPhoto
       } catch (error) {
         console.error(error)
@@ -235,6 +237,10 @@ const resolvers = {
     async photos (_, { approved }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
       return photosModel.list({ approved, favs })
+    },
+    async topTen (_, __, context) {
+      const { _id } = await checkIsUserLogged(context)
+      return photosModel.topTen({ userId: _id })
     }
   },
   User: {
