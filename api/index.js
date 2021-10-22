@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const { ApolloServer } = require('apollo-server-express')
+const { graphqlUploadExpress } = require('graphql-upload')
 const { resolvers, typeDefs } = require('./schema')
 const jwt = require('express-jwt')
 
@@ -42,6 +43,7 @@ const errorHandler = (err, req, res, next) => {
   res.status(status).json(err)
 }
 app.use(errorHandler)
+app.use(graphqlUploadExpress())
 server.applyMiddleware({ app, path: '/graphql' })
 
 app.get('/categories', function (req, res) {
