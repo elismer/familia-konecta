@@ -1,40 +1,48 @@
-const userModel = require('./models/userModel')
-const categoriesModel = require('./models/categoriesModel')
-const photosModel = require('./models/photosModel')
+const UserModel = require('./models/userModel')
+const PhotosModel = require('./models/photosModel')
 const { gql } = require('apollo-server-express')
+const { finished } = require('stream')
 const jsonwebtoken = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
+const { config: { jwtSecret } } = require('./config')
+
+const userModel = new UserModel()
+const photosModel = new PhotosModel()
 
 const typeDefs = gql`
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
+
   type User {
     id: ID
     avatar: String
-    name: String
-    email: String
-    isPremium: Boolean
+    nombre: String
+    apellido: String
+    dni: Int
+    isAdmin: Boolean
+  }
+
+  type Comment {
+    userId: ID
+    comment: String
+    approved: Boolean
   }
 
   type Photo {
     id: ID
-    categoryId: Int
-    src: String
     likes: Int
     liked: Boolean
     userId: ID
-  }
-
-  type Category {
-    id: ID
-    cover: String
-    name: String
-    emoji: String
-    path: String
+    description: String
+    comments: [Comment]
+    approved: Boolean
   }
 
   type Query {
     favs: [Photo]
-    categories: [Category]
-    photos(categoryId: ID): [Photo]
+    photos(approved: Boolean): [Photo]
     photo(id: ID!): Photo
   }
 
@@ -43,23 +51,41 @@ const typeDefs = gql`
   }
 
   input UserCredentials {
-    email: String!
-    password: String!
+    dni: Int!
+    password: Int!
+  }
+
+  input PhotoUpload {
+    userId: ID
+    description: String
+    file: Upload!
+  }
+
+  input CommentUpload {
+    photoId: ID!
+    userId: ID!
+    comment: String!
   }
 
   type Mutation {
     likePhoto(input: LikePhoto!): Photo
+    addPhoto(input: PhotoUpload!): Photo
+    addComment(input: CommentUpload!): Comment
+    approvePhoto(input: ID!): Boolean
+    approveComment(input: CommentUpload!): Boolean
+    removePhoto(input: ID!): Boolean
+    removeComment(input: CommentUpload!): Boolean
     signup(input: UserCredentials!): String
     login(input: UserCredentials!): String
   }
 `
 
 function checkIsUserLogged (context) {
-  const { email, id } = context
+  const { dni, id } = context
   // check if the user is logged
   if (!id) throw new Error('you must be logged in to perform this action')
   // find the user and check if it exists
-  const user = userModel.find({ email })
+  const user = userModel.find({ dni })
   // if user doesnt exist, throw an error
   if (!user) throw new Error('user does not exist')
   return user
@@ -67,8 +93,8 @@ function checkIsUserLogged (context) {
 
 function tryGetFavsFromUserLogged (context) {
   try {
-    const { email } = checkIsUserLogged(context)
-    const user = userModel.find({ email })
+    const { dni } = checkIsUserLogged(context)
+    const user = userModel.find({ dni })
     return user.favs
   } catch (e) {
     return []
@@ -105,53 +131,94 @@ const resolvers = {
     },
     // Handle user signup
     async signup (_, { input }) {
-      // add 1 second of delay in order to see loading stuff
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const { dni, email, password } = input
 
-      const { email, password } = input
+      const user = await userModel.find({ dni })
 
-      const user = await userModel.find({ email })
-
-      if (user) {
-        throw new Error('User already exists')
+      if (!user) {
+        throw new Error(`No user with that DNI`)
       }
 
       const newUser = await userModel.create({
+        dni,
         email,
         password
       })
 
       // return json web token
       return jsonwebtoken.sign(
-        { id: newUser.id, email: newUser.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '1y' }
+        { id: newUser.id, dni },
+        jwtSecret,
+        { expiresIn: '1d' }
       )
     },
 
     // Handles user login
     async login (_, { input }) {
-      // add 1 second of delay in order to see loading stuff
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      const { email, password } = input
-      const user = await userModel.find({ email })
+      const { dni, password } = input
+      const user = await userModel.find({ dni })
 
       if (!user) {
-        throw new Error('No user with that email')
+        throw new Error('No user with that dni')
       }
-
-      const valid = await bcrypt.compare(password, user.password)
+      const valid = password === user.password
       if (!valid) {
         throw new Error('Incorrect password')
       }
 
       // return json web token
       return jsonwebtoken.sign(
-        { id: user.id, email: user.email },
-        process.env.JWT_SECRET,
+        { id: user.id, dni },
+        jwtSecret,
         { expiresIn: '1d' }
       )
+    },
+
+    async addPhoto (parent, { file, userId, description }, context) {
+      const { dni } = checkIsUserLogged(context)
+      const { createReadStream } = await file
+
+      // Invoking the `createReadStream` will return a Readable Stream.
+      // See https://nodejs.org/api/stream.html#stream_readable_streams
+      const stream = createReadStream()
+
+      // This is purely for demonstration purposes and will overwrite the
+      // local-file-output.txt in the current working directory on EACH upload.
+      const out = require('fs').createWriteStream(`../images/${dni}.jpg`)
+      stream.pipe(out)
+      await finished(out)
+      const newPhoto = await photosModel.create({ userId, description })
+      return newPhoto
+    },
+
+    async addComment (_, { photoId, userId, comment }, context) {
+      checkIsUserLogged(context)
+      const newComment = await photosModel.addComment({ id: photoId, userId, comment })
+      return newComment
+    },
+
+    async approvePhoto (_, { photoId }, context) {
+      checkIsUserLogged(context)
+      await photosModel.approvePhoto({ id: photoId })
+      return true
+    },
+
+    async approveComment (_, { photoId, userId, comment }, context) {
+      checkIsUserLogged(context)
+      await photosModel.approveComment({ id: photoId, userId, comment })
+      return true
+    },
+
+    async removePhoto (_, { photoId, userId }, context) {
+      checkIsUserLogged(context)
+      await photosModel.removePhoto({ id: photoId, userId })
+      return true
+    },
+
+    async removeComment (_, { photoId, userId, comment }, context) {
+      checkIsUserLogged(context)
+      await photosModel.removeComment({ id: photoId, userId, comment })
+      return true
     }
   },
   Query: {
@@ -160,16 +227,13 @@ const resolvers = {
       const { favs } = userModel.find({ email })
       return photosModel.list({ ids: favs, favs })
     },
-    categories () {
-      return categoriesModel.list()
-    },
     photo (_, { id }, context) {
       const favs = tryGetFavsFromUserLogged(context)
       return photosModel.find({ id, favs })
     },
-    photos (_, { categoryId }, context) {
+    photos (_, { approved }, context) {
       const favs = tryGetFavsFromUserLogged(context)
-      return photosModel.list({ categoryId, favs })
+      return photosModel.list({ approved, favs })
     }
   }
 }
