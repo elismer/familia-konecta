@@ -41,19 +41,21 @@ class PhotosModel {
     }))
   }
 
-  async create ({ userId, description }) {
+  async create ({ userId, description, src }) {
     const photo = {
       userId,
       description,
       approved: false,
       likes: 0,
-      comments: []
+      comments: [],
+      src
     }
     await this.mongoDB.create(this.collection, photo)
     return true
   }
 
   async approvePhoto ({ _id }) {
+    console.log({_id})
     await this.mongoDB.update(
       this.collection,
       _id,

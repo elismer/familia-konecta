@@ -4,7 +4,7 @@ const { gql } = require('apollo-server-express')
 const { finished } = require('stream')
 const path = require('path')
 const jsonwebtoken = require('jsonwebtoken')
-const { config: { jwtSecret } } = require('./config')
+const { config: { jwtSecret }, config } = require('./config')
 const { promisify } = require('util')
 const { GraphQLUpload } = require('graphql-upload')
 const userModel = new UserModel()
@@ -190,7 +190,7 @@ const resolvers = {
       const finishedPromise = promisify(finished)
       try {
         await finishedPromise(out)
-        const newPhoto = await photosModel.create({ _id, description })
+        const newPhoto = await photosModel.create({ userId:_id, description, src: `${config.imageBaseUrl}${_id}.jpg` })
         return newPhoto
       } catch (error) {
         console.error(error)
@@ -203,9 +203,9 @@ const resolvers = {
       return newComment
     },
 
-    async approvePhoto (_, { photoId }, context) {
+    async approvePhoto (_, { input }, context) {
       await checkIsUserLogged(context)
-      await photosModel.approvePhoto({ id: photoId })
+      await photosModel.approvePhoto({ _id: input })
       return true
     },
 
@@ -215,9 +215,9 @@ const resolvers = {
       return true
     },
 
-    async removePhoto (_, { photoId, userId }, context) {
+    async removePhoto (_, { input }, context) {
       await checkIsUserLogged(context)
-      await photosModel.removePhoto({ id: photoId, userId })
+      await photosModel.removePhoto({ _id: input })
       return true
     },
 

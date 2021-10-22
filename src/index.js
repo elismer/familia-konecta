@@ -9,7 +9,7 @@ import Context from './Context'
 import App from './App'
 
 const token = window.sessionStorage.getItem('token')
-const link = createUploadLink({ uri: "http://localhost:3500/graphql", headers:{Authorization:`Bearer ${token}`}})
+const link = createUploadLink({ uri: "http://localhost:3500/graphql", headers:{Authorization:token ? `Bearer ${token}`: ''}})
 const client = new ApolloClient({
   link,
   cache: new InMemoryCache(),

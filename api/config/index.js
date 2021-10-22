@@ -8,7 +8,8 @@ const config = {
   dbPassword: process.env.DB_PASSWORD,
   dbHost: process.env.DB_HOST,
   dbName: process.env.DB_NAME,
-  jwtSecret: process.env.JWT_SECRET
+  jwtSecret: process.env.JWT_SECRET,
+  imageBaseUrl: process.env.IMAGE_BASE_URL || 'http://localhost:3500/image/'
 }
 
 module.exports = { config }

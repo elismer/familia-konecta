@@ -1,10 +1,10 @@
 import React from 'react'
+import { RemovePhotoMutation } from '../../containers/RemovePhotoMutation'
+import { ApprovePhotoMutation } from '../../containers/ApprovePhotoMutation'
 import { PhotoCard } from '../PhotoCard'
 import { Wrapper, Container, Item, Title, Like, Dislike, Approval } from './styles'
 
 export const ApprovePhotosContainer = ({ data: { photos = [] } }) => {
-
-  const photoList = photos.length ? photos.slice(0, 3) : []
 
   return (
     <Wrapper>
@@ -12,13 +12,31 @@ export const ApprovePhotosContainer = ({ data: { photos = [] } }) => {
         Pendientes de aprovacion
       </Title>
       <Container>
-        {photoList.map(photo => <Item key={photo.id}>
+        {photos.map(photo => <Item key={photo.id}>
           <PhotoCard {...photo} />
           <Approval>
-            <Dislike />
-            <Like />
-          </Approval>
+            <RemovePhotoMutation>
+              {
+                (removePhoto) => {
+                  const handleRemove = ()=>{
+                    removePhoto({variables: { id: photo.id }})
+                  }
+                  return(<Dislike onClick={handleRemove}/>)
 
+                }
+              }
+            </RemovePhotoMutation>
+            <ApprovePhotoMutation>
+              {
+                (approvePhoto) => {
+                  const handleApprove = ()=>{
+                    approvePhoto({variables: { id: photo.id }})
+                  }
+                  return(<Like onClick={handleApprove}/>)
+                }
+              }
+            </ApprovePhotoMutation>
+          </Approval>
         </Item>)
         }
       </Container>

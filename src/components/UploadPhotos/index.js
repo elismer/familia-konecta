@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { AddPhotoMutation } from '../../containers/addPhotoMutation'
+import { AddPhotoMutation } from '../../containers/AddPhotoMutation'
 import { ButtonTemplate, Text } from '../ButtonStandard/styles'
 import { Content, Wrapper, Button, ButtonContainer, Title, ImageContainer, Image } from './styles'
 
