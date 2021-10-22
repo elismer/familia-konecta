@@ -14,7 +14,7 @@ const Profile = React.lazy(() => import('./pages/Profile'))
 export default function () {
   return (
     <React.Suspense fallback={<div />}>
-      <Banner />
+      {/* <Banner /> */}
       <GlobalStyles />
       <Router>
         <Home path='/' />

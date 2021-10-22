@@ -4,20 +4,20 @@ import { Error, Form, Input, Title } from './styles'
 import { Button } from '../Button'
 
 export const UserForm = ({ disabled, error, title, onSubmit }) => {
-  const email = useInputValue('')
+  const dni = useInputValue('')
   const password = useInputValue('')
 
   const handleSubmit = e => {
     e.preventDefault()
-    onSubmit({ email: email.value, password: password.value })
+    onSubmit({ dni: dni.value, password: password.value })
   }
 
   return (
     <Fragment>
       <Form disabled={disabled} onSubmit={handleSubmit}>
         <Title>{title}</Title>
-        <Input placeholder='Email' {...email} />
-        <Input placeholder='Password' type='password' {...password} />
+        <Input placeholder='DNI' {...dni} />
+        <Input placeholder='Contraseña' type='password' {...password} />
         <Button>{title}</Button>
       </Form>
       {error && <Error>{error}</Error>}
