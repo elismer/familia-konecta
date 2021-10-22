@@ -1,7 +1,5 @@
 
 import { ListOfMostVotedContainer } from '../components/ListOfMostVotedContainer'
-import { withPhotos } from '../hocs/withPhotos'
+import { withPhotosRanking } from '../hocs/withPhotosRanking'
 
-export const ListOfMostVoted = withPhotos(ListOfMostVotedContainer)
-
-
+export const ListOfMostVoted = withPhotosRanking(ListOfMostVotedContainer)
