@@ -8,6 +8,7 @@ import Context from './Context'
 import { Banner } from './components/Banner'
 import TermConditions from './pages/TermsConditions'
 import { ApprovePhotos } from './containers/ApprovePhotos'
+import { UploadPhotos } from './components/UploadPhotos'
 
 export default function () {
   return (
@@ -27,6 +28,7 @@ export default function () {
                   <Detail path='/detail/:id' />
                   <TermConditions path='/ttcc' />
                   <ApprovePhotos path='/approve'/>
+                  <UploadPhotos path='/upload'/>
                 </Router>
               </>
               : <Router>
