@@ -6,6 +6,7 @@ import { Detail } from './pages/Detail'
 import { NotRegistered } from './pages/NotRegistered'
 import Context from './Context'
 import { Banner } from './components/Banner'
+import TermConditions from './pages/TermsConditions'
 
 const Favs = React.lazy(() => import('./pages/Favs'))
 const Profile = React.lazy(() => import('./pages/Profile'))
@@ -19,6 +20,7 @@ export default function () {
         <Home path='/' />
         <Home path='/pet/:id' />
         <Detail path='/detail/:id' />
+        <TermConditions path='/ttcc'/>
       </Router>
 
       <Context.Consumer>
