@@ -10,7 +10,6 @@ export const Wrapper = styled.div`
     background-color: seashell;
     height: 100%;
     width: 100vw;
-    margin-top: 5rem;
     background-image: url(${backgroundFull});
     background-repeat: no-repeat;
     background-size: cover;
@@ -23,9 +22,12 @@ export const Content = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding: 1rem;
+    padding: 2rem;
     height: 80%;
-    width: 50vw;
+    width: 70vw;
+    margin: 5rem 0;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 1rem;
     box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 
                 0px 4px 25px rgba(0, 0, 0, 0.05), 
                 0px 3px 6px rgba(0, 0, 0, 0.04);
@@ -35,6 +37,7 @@ export const Title = styled.h1`
     size: 3rem;
     font-weight: bold;
     margin-bottom: 3rem;
+    margin-top: 1rem;
 `
 
 export const Item = styled.div`
@@ -50,6 +53,7 @@ export const Subtitle = styled.h2`
 
 export const Description = styled.p`
     size: 1rem;
+    font-size: 1.5rem;
     font-weight: normal;
     margin-bottom: 1rem;
 `

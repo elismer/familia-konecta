@@ -14,7 +14,6 @@ export default function () {
   return (
     <React.Suspense fallback={<div />}>
       <GlobalStyles />
-
       <Context.Consumer>
         {
           ({ isAuth }) =>
@@ -25,13 +24,14 @@ export default function () {
                   <Home path='/' />
                   <Home path='/pet/:id' />
                   <Detail path='/detail/:id' />
-                  <TermConditions path='/ttcc' />
+                  <TermConditions path='/ttcc'/>
                   <ListPendingPhotos path='/approve' />
                   <UploadPhotos path='/upload' />
                 </Router>
               </>
               : <Router>
                 <NotRegistered path='/' />
+                <TermConditions path='/ttcc-open'/>
               </Router>
         }
       </Context.Consumer>

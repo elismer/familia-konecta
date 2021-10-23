@@ -10,6 +10,7 @@ export const Wrapper = styled.div`
     height: 100vh;
     width: 100vw;
     margin-top: 5rem;
+    background-color: seashell;
 `
 
 export const Container = styled.div`
@@ -17,10 +18,10 @@ export const Container = styled.div`
     padding: 1rem;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
     width: 100%;
-    max-height: 100%;
+    height: 100%;
     gap: 1rem;
 `
 
@@ -40,9 +41,15 @@ export const Title = styled.h1`
 `
 
 export const Item = styled.div`
-  padding-bottom: 2rem;
-  width: 75%;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  padding: 2rem;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 1rem;
+  background-color: rgba(255,255,255,.7);
   box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 
                 0px 4px 25px rgba(0, 0, 0, 0.05), 
                 0px 3px 6px rgba(0, 0, 0, 0.04);
@@ -61,6 +68,7 @@ export const Like = styled.img.attrs(() => ({
     height: 100%;
     max-height: 4rem;
     border-radius: 8px 8px 0 0;
+    cursor: pointer;
 `
 
 export const Dislike = styled.img.attrs(() => ({
@@ -70,5 +78,6 @@ export const Dislike = styled.img.attrs(() => ({
     height: 100%;
     max-height: 4rem;
     border-radius: 8px 8px 0 0;
+    cursor: pointer;
 `
 
