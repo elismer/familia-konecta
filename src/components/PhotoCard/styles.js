@@ -2,12 +2,16 @@ import styled from 'styled-components'
 import { fadeIn } from '../../styles/animations'
 
 export const Article = styled.article`
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 
+                0px 4px 25px rgba(0, 0, 0, 0.05), 
+                0px 3px 6px rgba(0, 0, 0, 0.04);
 `
 
 export const ImgWrapper = styled.div`
   border-radius: 10px;
   display: block;
-  height: 0;
   overflow: hidden;
   padding: 56.25% 0 0 0;
   position: relative;

@@ -5,7 +5,6 @@ export const List = styled.ul`
   display: grid;
   grid-template-columns: repeat(3, minmax(16rem,1fr));
   justify-items: center;
-  
   gap: 1rem;
 `
 

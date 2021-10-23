@@ -10,7 +10,6 @@ export const NavBar = () => {
     <Nav>
       <Link to='/' data-tip data-for="home"><MdHome size={SIZE} /></Link>
       <Link to='/upload' data-tip data-for="upload"><MdAdd size={SIZE} /></Link>
-      <Link to='/detail/:id' data-tip data-for="detail"><MdPersonOutline size={SIZE} /></Link>
       <Link to='/ttcc' data-tip data-for="ttcc"><MdInfo size={SIZE} /></Link>
       <Link to='/approve' data-tip data-for="approve"><MdCheckBox size={SIZE} /></Link>
 
@@ -19,9 +18,6 @@ export const NavBar = () => {
       </ReactTooltip>
       <ReactTooltip id="upload" place="bottom" effect="solid">
         Subir foto
-      </ReactTooltip>
-      <ReactTooltip id="detail" place="bottom" effect="solid">
-        Ver foto subida
       </ReactTooltip>
       <ReactTooltip id="ttcc" place="bottom" effect="solid">
         Terminos y condiciones

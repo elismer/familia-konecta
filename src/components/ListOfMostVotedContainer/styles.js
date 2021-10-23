@@ -10,6 +10,7 @@ export const Wrapper = styled.div`
     width: 100%;
     max-height: 100%;
     gap: 1rem;
+    background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 
                 0px 4px 25px rgba(0, 0, 0, 0.05), 
                 0px 3px 6px rgba(0, 0, 0, 0.04);
