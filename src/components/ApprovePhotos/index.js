@@ -9,7 +9,7 @@ export const ApprovePhotos = ({ data: { photos = [] } }) => {
   return (
     <>
       <Title>
-        Fotos pendientes de aprovación
+        Fotos pendientes de aprobación
       </Title>
       <Container>
         {

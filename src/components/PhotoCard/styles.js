@@ -40,3 +40,8 @@ export const Capitalize = styled.p`
   text-transform: capitalize;
   font-weight: bold;
 `
+
+export const Fecha = styled.p`
+  font-size: .75rem;
+  color: rgba(0,0,0,0.5);
+`

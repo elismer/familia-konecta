@@ -7,7 +7,7 @@ export const ApproveComments = ({ data: { commentsAudit = {} } }) => {
   return (
     <>
       <Title>
-        Comentarios pendientes de aprovación
+        Comentarios pendientes de aprobación
       </Title>
       <Container>
         {
