@@ -256,7 +256,7 @@ const resolvers = {
       return photosModel.list({ ids: favs, favs })
     },
     async commentsAudit (_, __, context) {
-      checkIsUserLogged(context)
+      await checkIsUserLogged(context)
       return await photosModel.listComments()
     },
     async photo (_, { id }, context) {
