@@ -23,7 +23,7 @@ export const Content = styled.div`
     align-items: center;
     padding: 1.5rem;
     height: 60vh;
-    width: 40vw;
+    width: 31vw;
     border-radius: 1rem;
     margin-top: 3rem;
     background-color: rgba(255,255,255,0.9);

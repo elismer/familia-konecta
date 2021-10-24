@@ -1,6 +1,10 @@
 
 const termConditions = [
     {
+        subtitle: "",
+        description: "DEL LUNES 25 AL DOMINGO 31 DE OCTUBRE INLUCIVE CELEBRAMOS LA SEMANA DE LA FAMILIA KONECTA"
+    },
+    {
         subtitle: "1. OBJETIVO DEL CONCURSO",
         description: "Obtener la mayor cantidad de me gusta en tu foto."
     },
@@ -23,7 +27,8 @@ const termConditions = [
             Además  contarás con la posibilidad de agregar una descripción de hasta 150 caracteres.
             Para finalizar la acción solo debes hacer click en el botón subir.
             Una vez cargada la descripción y seleccionada la imagen se podrá hacer click en el botón subir.
-            Las fotos y comentarios aparecerán en la plataforma en el transcurso máximo de 24 hs,  previa autorización del área de clima laboral.
+            Las fotos y comentarios aparecerán en la plataforma en el transcurso máximo de 24 hs,  previa autorización del área de clima laboral. 
+            Hacer click en el logo de la "Semana de la Familia" para ser redirigido a la pantalla principal (Home).
         `
     },
     {

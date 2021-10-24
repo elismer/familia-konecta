@@ -27,7 +27,7 @@ export const NavBar = () => {
           </ReactTooltip>
           {user.isAdmin &&
             (<ReactTooltip id='approve' place='bottom' effect='solid'>
-            Approvacion de las fotos
+            Aprobación de las fotos
             </ReactTooltip>)}
         </Nav>
       )
