@@ -25,7 +25,7 @@ const client = new ApolloClient({
   link: authLink.concat(link),
   cache: new InMemoryCache()
 })
-
+ 
 ReactDOM.render(
   <Context.Provider>
     <ApolloProvider client={client}>
