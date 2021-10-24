@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
 
 const mutation = gql`
-mutation RemoveComment($input: CommentUpload!) {
+mutation RemoveComment($input: CommentAudit!) {
   removeComment(input: $input)
 }
 `

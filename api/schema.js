@@ -18,6 +18,7 @@ const typeDefs = gql`
     apellido: String
     dni: Int
     isAdmin: Boolean
+    hasPhoto: Boolean
   }
 
   type Comment {
@@ -86,6 +87,11 @@ const typeDefs = gql`
   input CommentUpload {
     photoId: ID!
     comment: String!
+  }
+
+  input CommentAudit {
+    photoId: ID!
+    comment: String!
     userId: ID!
   }
 
@@ -94,9 +100,9 @@ const typeDefs = gql`
     addPhoto(input: PhotoUpload!): Photo
     addComment(input: CommentUpload!): Comment
     approvePhoto(input: ID!): Boolean
-    approveComment(input: CommentUpload!): Boolean
+    approveComment(input: CommentAudit!): Boolean
     removePhoto(input: ID!): Boolean
-    removeComment(input: CommentUpload!): Boolean
+    removeComment(input: CommentAudit!): Boolean
     signup(input: UserCredentials!): String
     login(input: UserCredentials!): LoginResponse
   }
@@ -148,6 +154,7 @@ const resolvers = {
         }
         // get the updated photos model
         const actualPhoto = await photosModel.find({ id: photoId, favs: hasFav ? [] : [photoId] })
+        console.log(actualPhoto)
         return actualPhoto
       } catch (error) {
         console.error(error)
@@ -189,16 +196,17 @@ const resolvers = {
       if (!valid) {
         throw new Error('Incorrect password')
       }
+      const { _id: id, favs, ...data } = user
       const token = jsonwebtoken.sign(
-        { id: user._id, dni, nombre: user.nombre, apellido: user.apellido },
+        { id, ...data },
         jwtSecret,
         { expiresIn: '1d' })
       // return json web token
-      return { token, userId: user._id }
+      return { token, userId: id }
     },
 
     async addPhoto (parent, { input: { file, description } }, context) {
-      const { _id } = await checkIsUserLogged(context)
+      const { _id, nombre, apellido, dni } = await checkIsUserLogged(context)
       console.log(file)
       const { createReadStream } = await file
 
@@ -213,7 +221,8 @@ const resolvers = {
       const finishedPromise = promisify(finished)
       try {
         await finishedPromise(out)
-        const newPhoto = await photosModel.create({ userId: _id, description, src: `${config.imageBaseUrl}${_id}.jpg` })
+        const newPhoto = await photosModel.create({ userId: _id, description, src: `${config.imageBaseUrl}${_id}.jpg`, nombre, apellido, dni })
+        await userModel.hasPhoto({ _id })
         return newPhoto
       } catch (error) {
         console.error(error)
@@ -232,9 +241,9 @@ const resolvers = {
       return true
     },
 
-    async approveComment (_, { photoId, userId, comment }, context) {
+    async approveComment (_, { input: { photoId, userId, comment } }, context) {
       await checkIsUserLogged(context)
-      await photosModel.approveComment({ id: photoId, userId, comment })
+      await photosModel.approveComment({ _id: photoId, userId, comment })
       return true
     },
 
@@ -244,9 +253,9 @@ const resolvers = {
       return true
     },
 
-    async removeComment (_, { photoId, userId, comment }, context) {
+    async removeComment (_, { input: { photoId, userId, comment } }, context) {
       await checkIsUserLogged(context)
-      await photosModel.removeComment({ id: photoId, userId, comment })
+      await photosModel.removeComment({ _id: photoId, userId, comment })
       return true
     }
   },

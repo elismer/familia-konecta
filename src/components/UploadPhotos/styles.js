@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import backgroundFull from "../../assets/images/background-full.jpeg"
+import { fadeIn } from '../../styles/animations'
 
 export const Wrapper = styled.div`
   display: flex;
@@ -12,7 +13,7 @@ export const Wrapper = styled.div`
   background-image: url(${backgroundFull});
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center center; 
+  background-position: center center;
   background-attachment: inherit;
 `
 
@@ -27,8 +28,8 @@ export const Content = styled.div`
   width: 50vw;
   border-radius: 1rem;
   background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 
-              0px 4px 25px rgba(0, 0, 0, 0.05), 
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04),
+              0px 4px 25px rgba(0, 0, 0, 0.05),
               0px 3px 6px rgba(0, 0, 0, 0.04);
 `
 
@@ -94,19 +95,26 @@ export const Subtitle = styled.h2`
     -webkit-text-fill-color: transparent;
 `
 
-export const ImageContainer = styled.div`
-  width: 20%;
-  display: flex;
-  align-self: center;
-  justify-content: center;
-  align-items: center;
+export const ImgWrapper = styled.div`
+  border-radius: 10px;
+  display: block;
+  overflow: hidden;
+  padding: 56.25% 0 0 0;
+  position: relative;
+  width: 100%;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04),
+                0px 4px 25px rgba(0, 0, 0, 0.05),
+                0px 3px 6px rgba(0, 0, 0, 0.04);
 `
 
-export const Image = styled.img`
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  max-width: 100%;
-  max-height: 100%;
+export const Img = styled.img`
+  ${fadeIn({ time: '2s' })};
+  box-shadow: 0 10px 14px rgba(0, 0, 0, .2);
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  width: 100%;
 `
 
 export const InputFile = styled.input.attrs({ type: 'file' })`

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { AddPhotoMutation } from '../../containers/AddPhotoMutation'
 import { ButtonTemplate, Text } from '../ButtonStandard/styles'
-import { Content, Wrapper, Button, ButtonContainer, Title, ImageContainer, Image, InputFile, Subtitle, InputTextArea, Counter, InputConteiner } from './styles'
+import { Content, Wrapper, Button, ButtonContainer, Title, ImgWrapper, Img, InputFile, Subtitle, InputTextArea, Counter, InputConteiner } from './styles'
 
 export const UploadPhotos = () => {
   const [uri, setUri] = useState()
@@ -13,9 +13,9 @@ export const UploadPhotos = () => {
     let imgTag = null
     if (uri !== null) {
       imgTag = (
-        <ImageContainer>
-          <Image className='thumbnail' src={uri} />
-        </ImageContainer>)
+        <ImgWrapper>
+          <Img className='thumbnail' src={uri} />
+        </ImgWrapper>)
     }
     return imgTag
   }

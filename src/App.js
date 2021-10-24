@@ -16,23 +16,25 @@ export default function () {
       <GlobalStyles />
       <Context.Consumer>
         {
-          ({ isAuth }) =>
-            isAuth
-              ? <>
-                <Banner />
-                <Router>
-                  <Home path='/' />
-                  <Home path='/pet/:id' />
-                  <Detail path='/detail/:id' />
-                  <TermConditions path='/ttcc'/>
-                  <Audit path='/approve' />
-                  <UploadPhotos path='/upload' />
-                </Router>
+          ({ isAuth, user }) => {
+            return (
+              isAuth
+                ? <>
+                  <Banner />
+                  <Router>
+                    <Home path='/' />
+                    <Home path='/pet/:id' />
+                    <Detail path='/detail/:id' />
+                    <TermConditions path='/ttcc' />
+                    {user.isAdmin && <Audit path='/approve' />}
+                    {!user.hasPhoto && <UploadPhotos path='/upload' />}
+                  </Router>
               </>
-              : <Router>
-                <NotRegistered path='/' />
-                <TermConditions path='/ttcc-open'/>
-              </Router>
+                : <Router>
+                  <NotRegistered path='/' />
+                  <TermConditions path='/ttcc-open' />
+                </Router>)
+          }
         }
       </Context.Consumer>
     </React.Suspense>

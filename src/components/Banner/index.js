@@ -7,7 +7,7 @@ export const Banner = () => {
   return (
     <Wrapper>
       <Logo />
-      <NavBar/>
+      <NavBar />
     </Wrapper>
   )
 }

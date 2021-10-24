@@ -6,6 +6,7 @@ query getPhotos {
   photos(approved: false) {
     id
     approved
+    description
     src
     likes
     userId

@@ -12,6 +12,7 @@ query CommentsAudit {
     pos
     description
     comments {
+      userId
       comment
       nombre
       apellido

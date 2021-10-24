@@ -10,6 +10,8 @@ query getPhotos {
     likes
     userId
     liked
+    nombre
+    apellido
     description
     comments{
       comment

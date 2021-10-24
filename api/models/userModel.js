@@ -54,6 +54,9 @@ class UserModel {
     await this.mongo.create(this.collection, user)
     return user
   }
+  async hasPhoto ({ _id }) {
+    return await this.mongo.update(this.collection, _id, { $set: { hasPhoto: true } })
+  }
 
   async find ({ dni }) {
     return this.mongo.get(this.collection, { dni })

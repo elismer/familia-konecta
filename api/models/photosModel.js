@@ -13,6 +13,11 @@ class PhotosModel {
       aggregation: [
         { $match: { _id: ObjectId(id), approved: true } },
         { $project: {
+          'likes': 1,
+          'src': 1,
+          'nombre': 1,
+          'apellido': 1,
+          'description': 1,
           'comments': {
             $slice: [
               { $filter: {
@@ -26,7 +31,7 @@ class PhotosModel {
       ]
     })
     return {
-      ...photo,
+      ...photo[0],
       liked: favs.includes(id.toString())
     }
   }
@@ -47,6 +52,11 @@ class PhotosModel {
       aggregation: [
         { $match: { approved } },
         { $project: {
+          'likes': 1,
+          'src': 1,
+          'nombre': 1,
+          'apellido': 1,
+          'description': 1,
           'comments': {
             $slice: [
               { $filter: {
@@ -76,14 +86,17 @@ class PhotosModel {
     return comments
   }
 
-  async create ({ userId, description, src }) {
+  async create ({ userId, description, src, nombre, apellido, dni }) {
     const photo = {
       userId,
       description,
       approved: false,
       likes: 0,
       comments: [],
-      src
+      src,
+      nombre,
+      apellido,
+      dni
     }
     await this.mongoDB.create(this.collection, photo)
     return true
@@ -99,10 +112,12 @@ class PhotosModel {
   }
 
   async removePhoto ({ _id }) {
+    console.log({_id})
     await this.mongoDB.delete(this.collection, _id)
   }
 
   async addComment ({ photoId, comment, userId, nombre, apellido }) {
+    console.log({userId})
     await this.mongoDB.update(
       this.collection,
       photoId,
@@ -112,9 +127,10 @@ class PhotosModel {
   }
 
   async approveComment ({ _id, userId, comment }) {
+    console.log({ _id, userId, comment })
     await this.mongoDB.updateComment(
       this.collection,
-      { _id: ObjectId(_id), 'comments.userId': userId, 'comments.comment': comment },
+      { _id: ObjectId(_id), 'comments.userId': ObjectId(userId), 'comments.comment': comment },
       { $set: { 'comments.$.approved': true } }
     )
     return true
@@ -124,7 +140,7 @@ class PhotosModel {
     await this.mongoDB.update(
       this.collection,
       _id,
-      { $pull: { comments: { userId, comment } } }
+      { $pull: { comments: { userId: ObjectId(userId), comment } } }
     )
   }
 

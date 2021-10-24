@@ -16,6 +16,7 @@
     "graphql-tag": "^2.10.1",
     "install": "^0.12.2",
     "intersection-observer": "^0.7.0",
+    "jwt-decode": "^3.1.2",
     "npm": "^6.9.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",

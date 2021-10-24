@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react'
 import { Link } from '@reach/router'
 import PropTypes from 'prop-types'
 
-import { Article, Img, ImgWrapper, ToggleContainer } from './styles'
+import { Article, Img, ImgWrapper, ToggleContainer,Capitalize } from './styles'
 
 import { FavButton } from '../FavButton'
 
@@ -14,7 +14,7 @@ import { CommentsList } from '../CommentsList'
 import { Comment } from '../Comment'
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60'
 
-export const PhotoCard = ({ id = 0, liked, likes = 0, src = DEFAULT_IMAGE, comments }) => {
+export const PhotoCard = ({ id = 0, liked, likes = 0, src = DEFAULT_IMAGE, comments, description, nombre, apellido }) => {
   const [show, ref] = useNearScreen()
   const [state, setState] = useState(false)
   return (
@@ -38,6 +38,8 @@ export const PhotoCard = ({ id = 0, liked, likes = 0, src = DEFAULT_IMAGE, comme
             </ToggleLikeMutation>
             <CommentsIcon {...{ state, setState }} />
           </ToggleContainer>
+          <Capitalize>{nombre}{' '}{apellido}</Capitalize>
+          { description && <p>{description}</p>}
           {comments && <CommentsList comments={comments} />}
           { state && <Comment photoId={id} close={setState} /> }
         </Fragment>
