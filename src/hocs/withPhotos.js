@@ -13,7 +13,7 @@ query getPhotos {
     nombre
     apellido
     description
-    createAt
+    date
     comments{
       comment
       userId

@@ -5,9 +5,9 @@ export const CommentsList = ({ comments }) => {
     return (
       <ul>
         {
-          comments.map(({ nombre, apellido, comment }) => {
+          comments.map(({ nombre, apellido, comment }, index) => {
             return (
-              <li>
+              <li key={index}>
                 <p><b>{nombre}{' '}{apellido}</b>: {' ' + comment}</p>
               </li>
             )
