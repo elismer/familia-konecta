@@ -38,11 +38,28 @@ const typeDefs = gql`
     description: String
     comments: [Comment]
     approved: Boolean
+    nombre: String
+    apellido: String
+  }
+
+  type PhotoAudit {
+    id: ID
+    src: String
+    likes: Int
+    liked: Boolean
+    userId: ID
+    pos: Int
+    description: String
+    comments: Comment
+    approved: Boolean
+    nombre: String
+    apellido: String
   }
 
   type Query {
     favs: [Photo]
     photos(approved: Boolean): [Photo]
+    commentsAudit:[PhotoAudit]
     photo(id: ID!): Photo
     topTen: [Photo]
   }
@@ -234,21 +251,25 @@ const resolvers = {
   },
   Query: {
     async favs (_, __, context) {
-      const { email } = await checkIsUserLogged(context)
-      const { favs } = userModel.find({ email })
+      const { _id } = await checkIsUserLogged(context)
+      const { favs } = userModel.find({ _id })
       return photosModel.list({ ids: favs, favs })
+    },
+    async commentsAudit (_, __, context) {
+      checkIsUserLogged(context)
+      return await photosModel.listComments()
     },
     async photo (_, { id }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
-      return photosModel.find({ id, favs })
+      return await photosModel.find({ id, favs })
     },
     async photos (_, { approved }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
-      return photosModel.list({ approved, favs })
+      return await photosModel.list({ approved, favs })
     },
     async topTen (_, __, context) {
       const { _id } = await checkIsUserLogged(context, 'topTen')
-      return photosModel.topTen({ userId: _id })
+      return await photosModel.topTen({ userId: _id })
     }
   },
   User: {
