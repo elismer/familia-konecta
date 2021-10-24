@@ -1,8 +1,8 @@
 
-import React from "react"
-import { ApprovePhotoMutation } from "../../containers/ApprovePhotoMutation"
-import { RemovePhotoMutation } from "../../containers/RemovePhotoMutation"
-import { PhotoCard } from "../PhotoCard"
+import React from 'react'
+import { ApprovePhotoMutation } from '../../containers/ApprovePhotoMutation'
+import { RemovePhotoMutation } from '../../containers/RemovePhotoMutation'
+import { PhotoCard } from '../PhotoCard'
 import { Title, Container, Approval, Item, Message, Like, Dislike } from './styles'
 
 export const ApprovePhotos = ({ data: { photos = [] } }) => {
@@ -13,18 +13,17 @@ export const ApprovePhotos = ({ data: { photos = [] } }) => {
       </Title>
       <Container>
         {
-          photos.length ?
-            photos.map(photo => <Item key={photo.id}>
+          photos.length
+            ? photos.map(photo => <Item key={photo.id}>
               <PhotoCard {...photo} />
               <Approval>
                 <RemovePhotoMutation>
                   {
                     (removePhoto) => {
                       const handleRemove = () => {
-                        removePhoto({ variables: { id: photo.id } })
+                        removePhoto({ variables: {input:{ photoId: photo.id, userId: photo.userId }} })
                       }
                       return (<Dislike onClick={handleRemove} />)
-
                     }
                   }
                 </RemovePhotoMutation>
@@ -40,8 +39,7 @@ export const ApprovePhotos = ({ data: { photos = [] } }) => {
                 </ApprovePhotoMutation>
               </Approval>
             </Item>)
-            :
-            <Message>No hay publicaciones para aprobar</Message>
+            : <Message>No hay publicaciones para aprobar</Message>
         }
       </Container>
     </>

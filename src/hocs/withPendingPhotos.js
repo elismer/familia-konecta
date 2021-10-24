@@ -10,6 +10,8 @@ query getPhotos {
     src
     likes
     userId
+    nombre
+    apellido
     liked
   }
 }`)

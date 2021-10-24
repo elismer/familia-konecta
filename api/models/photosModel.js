@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongodb')
 const MongoLib = require('../lib/mongo')
-
+const path = require('path')
+const { promisify } = require('util')
 class PhotosModel {
   constructor () {
     this.collection = 'photos'
@@ -52,6 +53,7 @@ class PhotosModel {
       aggregation: [
         { $match: { approved } },
         { $project: {
+          'userId': 1,
           'likes': 1,
           'src': 1,
           'nombre': 1,
@@ -96,10 +98,11 @@ class PhotosModel {
       src,
       nombre,
       apellido,
-      dni
+      dni,
+      createAt: new Date()
     }
     await this.mongoDB.create(this.collection, photo)
-    return true
+    return {...photo, liked:false }
   }
 
   async approvePhoto ({ _id }) {
@@ -111,8 +114,9 @@ class PhotosModel {
     return true
   }
 
-  async removePhoto ({ _id }) {
-    console.log({_id})
+  async removePhoto ({ _id, userId }) {
+    const rm = promisify(require('fs').rm)
+    rm(path.join(__dirname,'../images',`${userId}.jpg`))
     await this.mongoDB.delete(this.collection, _id)
   }
 

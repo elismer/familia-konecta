@@ -3,8 +3,8 @@ import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
 
 const mutation = gql`
-mutation RemovePhoto($id: ID!) {
-  removePhoto(input: $id)
+mutation RemovePhoto($input: PhotoRemove!) {
+  removePhoto(input: $input)
 }
 `
 

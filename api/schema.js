@@ -84,6 +84,11 @@ const typeDefs = gql`
     file: Upload!
   }
 
+  input PhotoRemove {
+    photoId: ID!
+    userId: ID!
+  }
+
   input CommentUpload {
     photoId: ID!
     comment: String!
@@ -101,7 +106,7 @@ const typeDefs = gql`
     addComment(input: CommentUpload!): Comment
     approvePhoto(input: ID!): Boolean
     approveComment(input: CommentAudit!): Boolean
-    removePhoto(input: ID!): Boolean
+    removePhoto(input: PhotoRemove!): Boolean
     removeComment(input: CommentAudit!): Boolean
     signup(input: UserCredentials!): String
     login(input: UserCredentials!): LoginResponse
@@ -207,7 +212,6 @@ const resolvers = {
 
     async addPhoto (parent, { input: { file, description } }, context) {
       const { _id, nombre, apellido, dni } = await checkIsUserLogged(context)
-      console.log(file)
       const { createReadStream } = await file
 
       // Invoking the `createReadStream` will return a Readable Stream.
@@ -247,9 +251,9 @@ const resolvers = {
       return true
     },
 
-    async removePhoto (_, { input }, context) {
+    async removePhoto (_, { input: { photoId, userId } }, context) {
       await checkIsUserLogged(context)
-      await photosModel.removePhoto({ _id: input })
+      await photosModel.removePhoto({ _id: photoId, userId })
       return true
     },
 
