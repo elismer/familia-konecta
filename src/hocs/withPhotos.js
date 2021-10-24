@@ -10,5 +10,12 @@ query getPhotos {
     likes
     userId
     liked
+    description
+    comments{
+      comment
+      userId
+      nombre
+      apellido
+    }
   }
 }`)
