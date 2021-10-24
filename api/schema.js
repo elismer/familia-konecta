@@ -9,9 +9,11 @@ const { promisify } = require('util')
 const { GraphQLUpload } = require('graphql-upload')
 const userModel = new UserModel()
 const photosModel = new PhotosModel()
+const { GraphQLScalarType, Kind } = require('graphql')
 
 const typeDefs = gql`
   scalar Upload
+  scalar DateTime
   type User {
     id: ID
     nombre: String
@@ -41,6 +43,7 @@ const typeDefs = gql`
     approved: Boolean
     nombre: String
     apellido: String
+    date: DateTime
   }
 
   type PhotoAudit {
@@ -55,6 +58,7 @@ const typeDefs = gql`
     approved: Boolean
     nombre: String
     apellido: String
+    date: DateTime
   }
 
   type Query {
@@ -136,6 +140,23 @@ async function tryGetFavsFromUserLogged (context) {
 
 const resolvers = {
   Upload: GraphQLUpload,
+  DateTime: new GraphQLScalarType({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    serialize (value) {
+      return value.getTime() // Convert outgoing Date to integer for JSON
+    },
+    parseValue (value) {
+      return new Date(value) // Convert incoming integer to Date
+    },
+    parseLiteral (ast) {
+      if (ast.kind === Kind.INT) {
+        return new Date(parseInt(ast.value, 10)) // Convert hard-coded AST string to integer and then to Date
+      }
+      return null // Invalid hard-coded value (not an integer)
+    }
+
+  }),
   Mutation: {
     async likePhoto (_, { input }, context) {
       const { dni, _id } = await checkIsUserLogged(context)

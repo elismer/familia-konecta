@@ -19,6 +19,7 @@ class PhotosModel {
           'nombre': 1,
           'apellido': 1,
           'description': 1,
+          'date': 1,
           'comments': {
             $slice: [
               { $filter: {
@@ -59,6 +60,7 @@ class PhotosModel {
           'nombre': 1,
           'apellido': 1,
           'description': 1,
+          'date': 1,
           'comments': {
             $slice: [
               { $filter: {
@@ -99,7 +101,7 @@ class PhotosModel {
       nombre,
       apellido,
       dni,
-      createAt: new Date()
+      date: new Date()
     }
     await this.mongoDB.create(this.collection, photo)
     return {...photo, liked:false }
