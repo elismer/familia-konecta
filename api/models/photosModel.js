@@ -8,7 +8,23 @@ class PhotosModel {
   }
 
   async find ({ id, favs = [] }) {
-    const photo = await this.mongoDB.get(this.collection, { _id: ObjectId(id) })
+    const photo = await this.mongoDB.aggregate({
+      collection: this.collection,
+      aggregation: [
+        { $match: { _id: ObjectId(id), approved: true } },
+        { $project: {
+          'comments': {
+            $slice: [
+              { $filter: {
+                'input': '$comments',
+                'as': 'comment',
+                'cond': { $eq: ['$$comment.approved', true] }
+              } }, 2
+            ]
+          }
+        } }
+      ]
+    })
     return {
       ...photo,
       liked: favs.includes(id.toString())
@@ -26,19 +42,38 @@ class PhotosModel {
   }
 
   async list ({ approved, favs = [] }) {
-    const photos = await this.mongoDB.getAll(
-      this.collection,
-      {
-        approved
-      },
-      {
-        projection: { comments: { '$slice': 2 } }
-      }
-    )
+    const photos = await this.mongoDB.aggregate({
+      collection: this.collection,
+      aggregation: [
+        { $match: { approved } },
+        { $project: {
+          'comments': {
+            $slice: [
+              { $filter: {
+                'input': '$comments',
+                'as': 'comment',
+                'cond': { $eq: ['$$comment.approved', true] }
+              } }, 2
+            ]
+          }
+        } }
+      ]
+    })
     return photos.map((photo) => ({
       ...photo,
       liked: favs.includes(photo._id.toString())
     }))
+  }
+
+  async listComments () {
+    const comments = await this.mongoDB.aggregate({
+      collection: this.collection,
+      aggregation: [
+        { $unwind: { path: '$comments', preserveNullAndEmptyArrays: false } },
+        { $match: { 'comments.approved': false } }
+      ]
+    })
+    return comments
   }
 
   async create ({ userId, description, src }) {
@@ -77,9 +112,9 @@ class PhotosModel {
   }
 
   async approveComment ({ _id, userId, comment }) {
-    await this.mongoDB.update(
+    await this.mongoDB.updateComment(
       this.collection,
-      { _id, 'comments.userId': userId, 'comments.comment': comment },
+      { _id: ObjectId(_id), 'comments.userId': userId, 'comments.comment': comment },
       { $set: { 'comments.$.approved': true } }
     )
     return true
