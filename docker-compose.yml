@@ -1,12 +1,56 @@
 version: '3'
 services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  backend:
+    image: familiakonecta/backend
+    restart: always
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo
+    expose: 
+      - 3500
+    volumes: 
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - VIRTUAL_PORT=3500
+      - VIRTUAL_HOST=api.familiakonecta.com.ar
+
+  frontend:
+    image: familiakonecta/frontend
+    restart: always
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    expose: 
+      - 5000
+    depends_on:
+      - backend
+    volumes: 
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/dist
+    environment:
+      - VIRTUAL_PORT=3000
+      - VIRTUAL_HOST=familiakonecta.com.ar,www.familiakonecta.com.ar
+
   mongo:
     image: mongo:4.4
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_ROOT_USERNAME: familiaKonecta
+      MONGO_INITDB_ROOT_PASSWORD: Xce9qmxBu9
     volumes:
      - ./data:/data/db
-    ports:
-     - "27017:27017"
+    expose:
+     - 27017
