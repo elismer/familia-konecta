@@ -1,5 +1,5 @@
 
 import { ApproveComments } from '../components/ApproveComments'
-import { withPendingPhotos } from '../hocs/withPendingPhotos'
+import { withPendingComments } from '../hocs/withPendingComments'
 
-export const ListPendingComments = withPendingPhotos(ApproveComments)
+export const ListPendingComments = withPendingComments(ApproveComments)
