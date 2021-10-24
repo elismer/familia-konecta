@@ -1,6 +1,5 @@
 const crypto = require('crypto')
 const uuidv1 = require('uuid/v1')
-const bcrypt = require('bcrypt')
 const MongoLib = require('../lib/mongo')
 
 class UserModel {

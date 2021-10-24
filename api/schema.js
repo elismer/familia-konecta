@@ -292,11 +292,13 @@ const resolvers = {
     },
     async commentsAudit (_, __, context) {
       await checkIsUserLogged(context)
-      return await photosModel.listComments()
+      const comments = await photosModel.listComments()
+      return comments
     },
     async photo (_, { id }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
-      return await photosModel.find({ id, favs })
+      const favs = await photosModel.find({ id, favs })
+      return favs
     },
     async photos (_, { approved }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
