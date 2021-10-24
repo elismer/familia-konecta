@@ -297,7 +297,8 @@ const resolvers = {
     },
     async photo (_, { id }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
-      return await photosModel.find({ id, favs })
+      const favs = await photosModel.find({ id, favs })
+      return favs
     },
     async photos (_, { approved }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
