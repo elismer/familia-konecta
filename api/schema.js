@@ -96,6 +96,7 @@ const typeDefs = gql`
   input CommentUpload {
     photoId: ID!
     comment: String!
+    userId: ID!
   }
 
   input CommentAudit {
