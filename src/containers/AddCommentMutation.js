@@ -1,16 +1,16 @@
 import React from 'react'
+import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
-import { gql } from 'apollo-boost'
 
 const mutation = gql`
-mutation login($input: UserCredentials!) {
-  login(input: $input){
-    token
+mutation likePhoto($input: CommentUpload!) {
+  addComment(input: $input) {
+    comment,
     userId
   }
 }
 `
 
-export const LoginMutation = ({ children }) => {
+export const AddCommentMutation = ({ children }) => {
   return <Mutation mutation={mutation}>{children}</Mutation>
 }

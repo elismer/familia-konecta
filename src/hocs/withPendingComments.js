@@ -1,21 +1,23 @@
 import { graphql } from 'react-apollo'
 import { gql } from 'apollo-boost'
 
-export const withPhotos = graphql(gql`
-query getPhotos {
-  photos(approved: true) {
+export const withPendingComments = graphql(gql`
+query CommentsAudit {
+  commentsAudit{
     id
-    approved
     src
     likes
-    userId
     liked
+    userId
+    pos
     description
-    comments{
+    comments {
       comment
-      userId
       nombre
       apellido
     }
+    approved
+    nombre
+    apellido
   }
 }`)

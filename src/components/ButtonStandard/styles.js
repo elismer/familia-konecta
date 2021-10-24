@@ -21,6 +21,7 @@ export const ButtonTemplate = styled.button`
     background: linear-gradient(90deg, hsla(231, 75%, 63%, 1), hsla(331, 75%, 63%, 1));
     border: none;
     color: #000000;
+    cursor: pointer;
 `
 
 export const Text = styled.span`

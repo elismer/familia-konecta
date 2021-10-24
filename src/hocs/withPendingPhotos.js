@@ -1,21 +1,14 @@
 import { graphql } from 'react-apollo'
 import { gql } from 'apollo-boost'
 
-export const withPhotos = graphql(gql`
+export const withPendingPhotos = graphql(gql`
 query getPhotos {
-  photos(approved: true) {
+  photos(approved: false) {
     id
     approved
     src
     likes
     userId
     liked
-    description
-    comments{
-      comment
-      userId
-      nombre
-      apellido
-    }
   }
 }`)

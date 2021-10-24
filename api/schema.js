@@ -2,19 +2,16 @@ const UserModel = require('./models/userModel')
 const PhotosModel = require('./models/photosModel')
 const { gql } = require('apollo-server-express')
 const { finished } = require('stream')
+const path = require('path')
 const jsonwebtoken = require('jsonwebtoken')
-const { config: { jwtSecret } } = require('./config')
-
+const { config: { jwtSecret }, config } = require('./config')
+const { promisify } = require('util')
+const { GraphQLUpload } = require('graphql-upload')
 const userModel = new UserModel()
 const photosModel = new PhotosModel()
 
 const typeDefs = gql`
-  type File {
-    filename: String!
-    mimetype: String!
-    encoding: String!
-  }
-
+  scalar Upload
   type User {
     id: ID
     nombre: String
@@ -25,6 +22,8 @@ const typeDefs = gql`
 
   type Comment {
     userId: ID
+    nombre: String
+    apellido: String
     comment: String
     approved: Boolean
   }
@@ -39,13 +38,35 @@ const typeDefs = gql`
     description: String
     comments: [Comment]
     approved: Boolean
+    nombre: String
+    apellido: String
+  }
+
+  type PhotoAudit {
+    id: ID
+    src: String
+    likes: Int
+    liked: Boolean
+    userId: ID
+    pos: Int
+    description: String
+    comments: Comment
+    approved: Boolean
+    nombre: String
+    apellido: String
   }
 
   type Query {
     favs: [Photo]
     photos(approved: Boolean): [Photo]
+    commentsAudit:[PhotoAudit]
     photo(id: ID!): Photo
     topTen: [Photo]
+  }
+
+  type LoginResponse{
+    token: String!
+    userId: String!
   }
 
   input LikePhoto {
@@ -58,15 +79,14 @@ const typeDefs = gql`
   }
 
   input PhotoUpload {
-    userId: ID
     description: String
     file: Upload!
   }
 
   input CommentUpload {
     photoId: ID!
-    userId: ID!
     comment: String!
+    userId: ID!
   }
 
   type Mutation {
@@ -78,7 +98,7 @@ const typeDefs = gql`
     removePhoto(input: ID!): Boolean
     removeComment(input: CommentUpload!): Boolean
     signup(input: UserCredentials!): String
-    login(input: UserCredentials!): String
+    login(input: UserCredentials!): LoginResponse
   }
 `
 
@@ -104,6 +124,7 @@ async function tryGetFavsFromUserLogged (context) {
 }
 
 const resolvers = {
+  Upload: GraphQLUpload,
   Mutation: {
     async likePhoto (_, { input }, context) {
       const { dni, _id } = await checkIsUserLogged(context)
@@ -168,17 +189,17 @@ const resolvers = {
       if (!valid) {
         throw new Error('Incorrect password')
       }
-
-      // return json web token
-      return jsonwebtoken.sign(
+      const token = jsonwebtoken.sign(
         { id: user._id, dni, nombre: user.nombre, apellido: user.apellido },
         jwtSecret,
-        { expiresIn: '1d' }
-      )
+        { expiresIn: '1d' })
+      // return json web token
+      return { token, userId: user._id }
     },
 
-    async addPhoto (parent, { file, userId, description }, context) {
-      const { dni } = await checkIsUserLogged(context)
+    async addPhoto (parent, { input: { file, description } }, context) {
+      const { _id } = await checkIsUserLogged(context)
+      console.log(file)
       const { createReadStream } = await file
 
       // Invoking the `createReadStream` will return a Readable Stream.
@@ -187,22 +208,27 @@ const resolvers = {
 
       // This is purely for demonstration purposes and will overwrite the
       // local-file-output.txt in the current working directory on EACH upload.
-      const out = require('fs').createWriteStream(`../images/${dni}.jpg`)
+      const out = require('fs').createWriteStream(path.join(__dirname, `/images/`, `${_id}.jpg`))
       stream.pipe(out)
-      await finished(out)
-      const newPhoto = await photosModel.create({ userId, description })
-      return newPhoto
+      const finishedPromise = promisify(finished)
+      try {
+        await finishedPromise(out)
+        const newPhoto = await photosModel.create({ userId: _id, description, src: `${config.imageBaseUrl}${_id}.jpg` })
+        return newPhoto
+      } catch (error) {
+        console.error(error)
+      }
     },
 
-    async addComment (_, { photoId, userId, comment }, context) {
-      await checkIsUserLogged(context)
-      const newComment = await photosModel.addComment({ id: photoId, userId, comment })
+    async addComment (_, { input: { photoId, comment } }, context) {
+      const { _id, nombre, apellido } = await checkIsUserLogged(context)
+      const newComment = await photosModel.addComment({ photoId, userId: _id, nombre, apellido, comment })
       return newComment
     },
 
-    async approvePhoto (_, { photoId }, context) {
+    async approvePhoto (_, { input }, context) {
       await checkIsUserLogged(context)
-      await photosModel.approvePhoto({ id: photoId })
+      await photosModel.approvePhoto({ _id: input })
       return true
     },
 
@@ -212,9 +238,9 @@ const resolvers = {
       return true
     },
 
-    async removePhoto (_, { photoId, userId }, context) {
+    async removePhoto (_, { input }, context) {
       await checkIsUserLogged(context)
-      await photosModel.removePhoto({ id: photoId, userId })
+      await photosModel.removePhoto({ _id: input })
       return true
     },
 
@@ -226,27 +252,34 @@ const resolvers = {
   },
   Query: {
     async favs (_, __, context) {
-      const { email } = await checkIsUserLogged(context)
-      const { favs } = userModel.find({ email })
+      const { _id } = await checkIsUserLogged(context)
+      const { favs } = userModel.find({ _id })
       return photosModel.list({ ids: favs, favs })
+    },
+    async commentsAudit (_, __, context) {
+      await checkIsUserLogged(context)
+      return await photosModel.listComments()
     },
     async photo (_, { id }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
-      return photosModel.find({ id, favs })
+      return await photosModel.find({ id, favs })
     },
     async photos (_, { approved }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
-      return photosModel.list({ approved, favs })
+      return await photosModel.list({ approved, favs })
     },
     async topTen (_, __, context) {
-      const { _id } = await checkIsUserLogged(context)
-      return photosModel.topTen({ userId: _id })
+      const { _id } = await checkIsUserLogged(context, 'topTen')
+      return await photosModel.topTen({ userId: _id })
     }
   },
   User: {
     id: (root) => root._id
   },
   Photo: {
+    id: (root) => root._id
+  },
+  PhotoAudit: {
     id: (root) => root._id
   }
 }

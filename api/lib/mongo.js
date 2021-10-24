@@ -4,8 +4,12 @@ const { config } = require('../config')
 const USER = encodeURIComponent(config.dbUser)
 const PASSWORD = encodeURIComponent(config.dbPassword)
 const DB_NAME = config.dbName
+const HOST = config.dbHost
+const PORT = config.dbPort
 
-const MONGO_URI = `mongodb+srv://${USER}:${PASSWORD}@${config.dbHost}/${DB_NAME}?retryWrites=true&w=majority`
+const MONGO_URI = PORT
+  ? `mongodb://${USER}:${PASSWORD}@${HOST}:${PORT}/${DB_NAME}?authSource=admin`
+  : `mongodb+srv://${USER}:${PASSWORD}@${HOST}/${DB_NAME}?retryWrites=true&w=majority`
 
 class MongoLib {
   constructor () {
@@ -70,6 +74,16 @@ class MongoLib {
           .updateOne({ _id: ObjectId(id) }, data, { upsert: true })
       })
       .then((result) => result.upsertedId || id)
+  }
+
+  updateComment (collection, query, data) {
+    return this.connect()
+      .then((db) => {
+        return db
+          .collection(collection)
+          .updateOne(query, data, { upsert: true })
+      })
+      .then((result) => result.upsertedId || query._id)
   }
 
   delete (collection, id) {

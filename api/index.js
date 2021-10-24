@@ -4,13 +4,12 @@ const { ApolloServer } = require('apollo-server-express')
 const { graphqlUploadExpress } = require('graphql-upload')
 const { resolvers, typeDefs } = require('./schema')
 const jwt = require('express-jwt')
-
+const path = require('path')
 // this is not secure! this is for dev purposes
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'somereallylongsecretkey'
 
 const PORT = process.env.PORT || 3500
 const app = express()
-const { categories } = require('./db.json')
 
 app.use(cors())
 
@@ -25,6 +24,7 @@ require('./adapter')
 const server = new ApolloServer({
   introspection: true, // do this only for dev purposes
   playground: true, // do this only for dev purposes
+  uploads: false,
   typeDefs,
   resolvers,
   context: ({ req }) => {
@@ -43,12 +43,15 @@ const errorHandler = (err, req, res, next) => {
   res.status(status).json(err)
 }
 app.use(errorHandler)
-app.use(graphqlUploadExpress())
-server.applyMiddleware({ app, path: '/graphql' })
-
-app.get('/categories', function (req, res) {
-  res.send(categories)
+app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }))
+server.applyMiddleware({ app,
+  path: '/graphql',
+  bodyParserConfig: {
+    limit: '10mb'
+  }
 })
+
+app.use('/image', express.static(path.join(__dirname, '/images')))
 
 if (!process.env.NOW_REGION) {
   app.listen(PORT, () => {

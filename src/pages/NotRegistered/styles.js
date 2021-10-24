@@ -5,7 +5,7 @@ import backgroundLoginFull from "../../assets/images/login-full.png"
 export const Wrapper = styled.div`
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     background-color: seashell;
     height: 100vh;
     width: 100vw;
@@ -21,10 +21,11 @@ export const Content = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
-    height: 50%;
-    width: 50vw;
+    padding: 1.5rem;
+    height: 60vh;
+    width: 40vw;
     border-radius: 1rem;
+    margin-top: 3rem;
     background-color: rgba(255,255,255,0.9);
     box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 
                 0px 4px 25px rgba(0, 0, 0, 0.05), 
@@ -34,4 +35,9 @@ export const Content = styled.div`
 export const Fields = styled.div`
     padding: 1rem;
     width: 100%;
+`
+
+export const LinkTo = styled.a`
+    font-size: 1rem;
+    cursor: pointer;
 `

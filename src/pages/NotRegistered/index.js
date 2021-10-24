@@ -3,8 +3,10 @@ import { Context } from '../../Context'
 import { UserForm } from '../../components/UserForm'
 import { LoginMutation } from '../../containers/LoginMutation'
 import { Layout } from '../../components/Layout'
-import { Wrapper, Content, Fields } from "./styles"
+import { Wrapper, Content, Fields, LinkTo } from "./styles"
 import { Logo } from '../../components/Logo'
+import { Link } from '@reach/router'
+
 
 export const NotRegistered = () => {
   const { activateAuth } = useContext(Context)
@@ -12,7 +14,7 @@ export const NotRegistered = () => {
   return (
     <Wrapper>
       <Content>
-        <Logo path="#"/>
+        <Logo width="30rem" height="6rem" path="#"/>
         <Fields>
           <LoginMutation>
             {(login, { loading, error }) => {
@@ -25,6 +27,11 @@ export const NotRegistered = () => {
             }}
           </LoginMutation>
         </Fields>
+        <Link to='/ttcc-open'>
+          <LinkTo>
+            Conoce como participar
+          </LinkTo>
+        </Link>
       </Content>
     </Wrapper>
   )

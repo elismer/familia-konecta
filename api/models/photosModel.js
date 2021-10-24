@@ -8,7 +8,23 @@ class PhotosModel {
   }
 
   async find ({ id, favs = [] }) {
-    const photo = await this.mongoDB.get(this.collection, { _id: ObjectId(id) })
+    const photo = await this.mongoDB.aggregate({
+      collection: this.collection,
+      aggregation: [
+        { $match: { _id: ObjectId(id), approved: true } },
+        { $project: {
+          'comments': {
+            $slice: [
+              { $filter: {
+                'input': '$comments',
+                'as': 'comment',
+                'cond': { $eq: ['$$comment.approved', true] }
+              } }, 2
+            ]
+          }
+        } }
+      ]
+    })
     return {
       ...photo,
       liked: favs.includes(id.toString())
@@ -26,28 +42,48 @@ class PhotosModel {
   }
 
   async list ({ approved, favs = [] }) {
-    const photos = await this.mongoDB.getAll(
-      this.collection,
-      {
-        approved
-      },
-      {
-        comments: { $slice: 2 }
-      }
-    )
+    const photos = await this.mongoDB.aggregate({
+      collection: this.collection,
+      aggregation: [
+        { $match: { approved } },
+        { $project: {
+          'comments': {
+            $slice: [
+              { $filter: {
+                'input': '$comments',
+                'as': 'comment',
+                'cond': { $eq: ['$$comment.approved', true] }
+              } }, 2
+            ]
+          }
+        } }
+      ]
+    })
     return photos.map((photo) => ({
       ...photo,
       liked: favs.includes(photo._id.toString())
     }))
   }
 
-  async create ({ userId, description }) {
+  async listComments () {
+    const comments = await this.mongoDB.aggregate({
+      collection: this.collection,
+      aggregation: [
+        { $unwind: { path: '$comments', preserveNullAndEmptyArrays: false } },
+        { $match: { 'comments.approved': false } }
+      ]
+    })
+    return comments
+  }
+
+  async create ({ userId, description, src }) {
     const photo = {
       userId,
       description,
       approved: false,
       likes: 0,
-      comments: []
+      comments: [],
+      src
     }
     await this.mongoDB.create(this.collection, photo)
     return true
@@ -66,19 +102,19 @@ class PhotosModel {
     await this.mongoDB.delete(this.collection, _id)
   }
 
-  async addComment ({ _id, comment, userId }) {
+  async addComment ({ photoId, comment, userId, nombre, apellido }) {
     await this.mongoDB.update(
       this.collection,
-      _id,
-      { $push: { comments: { userId, comment, approved: false } } }
+      photoId,
+      { $push: { comments: { userId, comment, nombre, apellido, approved: false } } }
     )
     return true
   }
 
   async approveComment ({ _id, userId, comment }) {
-    await this.mongoDB.update(
+    await this.mongoDB.updateComment(
       this.collection,
-      { _id, 'comments.userId': userId, 'comments.comment': comment },
+      { _id: ObjectId(_id), 'comments.userId': userId, 'comments.comment': comment },
       { $set: { 'comments.$.approved': true } }
     )
     return true
@@ -97,11 +133,11 @@ class PhotosModel {
       collection: this.collection,
       aggregation: [{ $match: { approved: true } }, { $sort: { likes: -1 } }]
     })
-    const ranking = result.findIndex(photo => photo.userId === userId)
+    const ranking = result.findIndex(photo => userId.equals(photo.userId))
     let myPhoto = {}
     if (ranking > 9) {
       myPhoto = result[ranking]
-      myPhoto.pos = ranking
+      myPhoto.pos = ranking + 1
     }
     const firstTen = result.slice(0, 10).map((photo, index) => ({ ...photo, pos: index + 1 }))
     return myPhoto.ranking ? [...firstTen, ...[myPhoto]] : firstTen
