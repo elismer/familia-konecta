@@ -14,6 +14,7 @@ export const Wrapper = styled.div`
 
 export const FavList = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   justify-content: center;
   border-radius: 10px;
