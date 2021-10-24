@@ -32,7 +32,7 @@ class PhotosModel {
         approved
       },
       {
-        comments: { $slice: 2 }
+        projection: { comments: { '$slice': 2 } }
       }
     )
     return photos.map((photo) => ({
@@ -55,7 +55,6 @@ class PhotosModel {
   }
 
   async approvePhoto ({ _id }) {
-    console.log({_id})
     await this.mongoDB.update(
       this.collection,
       _id,
@@ -68,11 +67,11 @@ class PhotosModel {
     await this.mongoDB.delete(this.collection, _id)
   }
 
-  async addComment ({ _id, comment, userId }) {
+  async addComment ({ photoId, comment, userId, nombre, apellido }) {
     await this.mongoDB.update(
       this.collection,
-      _id,
-      { $push: { comments: { userId, comment, approved: false } } }
+      photoId,
+      { $push: { comments: { userId, comment, nombre, apellido, approved: false } } }
     )
     return true
   }

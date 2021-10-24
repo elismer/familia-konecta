@@ -16,8 +16,8 @@ export const ImgWrapper = styled.div`
   padding: 56.25% 0 0 0;
   position: relative;
   width: 100%;
-  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04), 
-                0px 4px 25px rgba(0, 0, 0, 0.05), 
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.04),
+                0px 4px 25px rgba(0, 0, 0, 0.05),
                 0px 3px 6px rgba(0, 0, 0, 0.04);
 `
 
@@ -29,4 +29,10 @@ export const Img = styled.img`
   position: absolute;
   top: 0;
   width: 100%;
+`
+
+export const ToggleContainer = styled.div`
+  display: flex;
+  justify-content: start;
+  align-items: center;
 `

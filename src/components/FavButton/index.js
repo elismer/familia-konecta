@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { MdFavorite, MdFavoriteBorder } from 'react-icons/md'
+import { FaHeart, FaRegHeart } from 'react-icons/fa'
 
 import { Button } from './styles'
 
 export const FavButton = ({ liked, likes, onClick }) => {
-  const Icon = liked ? MdFavorite : MdFavoriteBorder
+  const Icon = liked ? FaHeart : FaRegHeart
 
   return (
     <Button onClick={onClick}>

@@ -22,6 +22,8 @@ const typeDefs = gql`
 
   type Comment {
     userId: ID
+    nombre: String
+    apellido: String
     comment: String
     approved: Boolean
   }
@@ -66,7 +68,6 @@ const typeDefs = gql`
 
   input CommentUpload {
     photoId: ID!
-    userId: ID!
     comment: String!
   }
 
@@ -175,10 +176,10 @@ const resolvers = {
         jwtSecret,
         { expiresIn: '1d' })
       // return json web token
-      return {token, userId:user._id}
+      return { token, userId: user._id }
     },
 
-    async addPhoto (parent, {input:{ file, description }}, context) {
+    async addPhoto (parent, { input: { file, description } }, context) {
       const { _id } = await checkIsUserLogged(context)
       console.log(file)
       const { createReadStream } = await file
@@ -194,16 +195,16 @@ const resolvers = {
       const finishedPromise = promisify(finished)
       try {
         await finishedPromise(out)
-        const newPhoto = await photosModel.create({ userId:_id, description, src: `${config.imageBaseUrl}${_id}.jpg` })
+        const newPhoto = await photosModel.create({ userId: _id, description, src: `${config.imageBaseUrl}${_id}.jpg` })
         return newPhoto
       } catch (error) {
         console.error(error)
       }
     },
 
-    async addComment (_, { photoId, userId, comment }, context) {
-      await checkIsUserLogged(context)
-      const newComment = await photosModel.addComment({ id: photoId, userId, comment })
+    async addComment (_, { input: { photoId, comment } }, context) {
+      const { _id, nombre, apellido } = await checkIsUserLogged(context)
+      const newComment = await photosModel.addComment({ photoId, userId: _id, nombre, apellido, comment })
       return newComment
     },
 
@@ -246,7 +247,7 @@ const resolvers = {
       return photosModel.list({ approved, favs })
     },
     async topTen (_, __, context) {
-      const { _id } = await checkIsUserLogged(context)
+      const { _id } = await checkIsUserLogged(context, 'topTen')
       return photosModel.topTen({ userId: _id })
     }
   },

@@ -4,13 +4,12 @@ const { ApolloServer } = require('apollo-server-express')
 const { graphqlUploadExpress } = require('graphql-upload')
 const { resolvers, typeDefs } = require('./schema')
 const jwt = require('express-jwt')
-const path = require('path');
+const path = require('path')
 // this is not secure! this is for dev purposes
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'somereallylongsecretkey'
 
 const PORT = process.env.PORT || 3500
 const app = express()
-const { categories } = require('./db.json')
 
 app.use(cors())
 
@@ -52,7 +51,7 @@ server.applyMiddleware({ app,
   }
 })
 
-app.use("/image", express.static(path.join(__dirname, "/images")));
+app.use('/image', express.static(path.join(__dirname, '/images')))
 
 if (!process.env.NOW_REGION) {
   app.listen(PORT, () => {
