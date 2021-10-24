@@ -292,7 +292,8 @@ const resolvers = {
     },
     async commentsAudit (_, __, context) {
       await checkIsUserLogged(context)
-      return await photosModel.listComments()
+      const comments = await photosModel.listComments()
+      return comments
     },
     async photo (_, { id }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
