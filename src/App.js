@@ -7,8 +7,8 @@ import { NotRegistered } from './pages/NotRegistered'
 import Context from './Context'
 import { Banner } from './components/Banner'
 import TermConditions from './pages/TermsConditions'
-import { ListPendingPhotos } from './containers/ListPendingPhotos'
 import { UploadPhotos } from './components/UploadPhotos'
+import { Audit } from './components/Audit'
 
 export default function () {
   return (
@@ -25,7 +25,7 @@ export default function () {
                   <Home path='/pet/:id' />
                   <Detail path='/detail/:id' />
                   <TermConditions path='/ttcc'/>
-                  <ListPendingPhotos path='/approve' />
+                  <Audit path='/approve' />
                   <UploadPhotos path='/upload' />
                 </Router>
               </>

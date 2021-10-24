@@ -1,5 +1,5 @@
 
-import { ApprovePhotosContainer } from '../components/ApprovePhotosContainer'
+import { ApprovePhotos } from '../components/ApprovePhotos'
 import { withPendingPhotos } from '../hocs/withPendingPhotos'
 
-export const ListPendingPhotos = withPendingPhotos(ApprovePhotosContainer)
+export const ListPendingPhotos = withPendingPhotos(ApprovePhotos)
