@@ -61,13 +61,20 @@ const typeDefs = gql`
     date: DateTime
   }
 
+  type TopTenResult {
+    photos: [Photo]
+    position: Int
+  }
+
   type Query {
     favs: [Photo]
     photos(approved: Boolean): [Photo]
     commentsAudit:[PhotoAudit]
     photo(id: ID!): Photo
-    topTen: [Photo]
+    topTen: TopTenResult
+    search(query: String!): [Photo]
   }
+
 
   type LoginResponse{
     token: String!
@@ -222,7 +229,6 @@ const resolvers = {
         throw new Error('Incorrect password')
       }
       const { _id: id, favs, ...data } = user
-      console.log(data)
       const token = jsonwebtoken.sign(
         { id, ...data },
         jwtSecret,
@@ -233,7 +239,7 @@ const resolvers = {
 
     async addPhoto (parent, { input: { file, description } }, context) {
       const { _id, nombre, apellido, dni, hasPhoto } = await checkIsUserLogged(context)
-      if(hasPhoto) return {}
+      if (hasPhoto) return {}
       const { createReadStream } = await file
 
       // Invoking the `createReadStream` will return a Readable Stream.
@@ -262,30 +268,30 @@ const resolvers = {
     },
 
     async approvePhoto (_, { input }, context) {
-      const {isAdmin} = await checkIsUserLogged(context)
-      if(!isAdmin) throw new Error('Unauthorized')
+      const { isAdmin } = await checkIsUserLogged(context)
+      if (!isAdmin) throw new Error('Unauthorized')
       await photosModel.approvePhoto({ _id: input })
       return true
     },
 
     async approveComment (_, { input: { photoId, userId, comment } }, context) {
-      const {isAdmin} = await checkIsUserLogged(context)
-      if(!isAdmin) throw new Error('Unauthorized')
+      const { isAdmin } = await checkIsUserLogged(context)
+      if (!isAdmin) throw new Error('Unauthorized')
       await photosModel.approveComment({ _id: photoId, userId, comment })
       return true
     },
 
     async removePhoto (_, { input: { photoId, userId } }, context) {
-      const {isAdmin} = await checkIsUserLogged(context)
-      if(!isAdmin) throw new Error('Unauthorized')
+      const { isAdmin } = await checkIsUserLogged(context)
+      if (!isAdmin) throw new Error('Unauthorized')
       await photosModel.removePhoto({ _id: photoId, userId })
       await userModel.hasPhoto({ _id, hasPhoto: false })
       return true
     },
 
     async removeComment (_, { input: { photoId, userId, comment } }, context) {
-      const {isAdmin} = await checkIsUserLogged(context)
-      if(!isAdmin) throw new Error('Unauthorized')
+      const { isAdmin } = await checkIsUserLogged(context)
+      if (!isAdmin) throw new Error('Unauthorized')
       await photosModel.removeComment({ _id: photoId, userId, comment })
       return true
     }
@@ -312,7 +318,13 @@ const resolvers = {
     },
     async topTen (_, __, context) {
       const { _id } = await checkIsUserLogged(context, 'topTen')
-      return await photosModel.topTen({ userId: _id })
+      const topTenResult = await photosModel.topTen({ userId: _id })
+      return topTenResult
+    },
+    async search (_, {query}, context) {
+      await checkIsUserLogged(context)
+      const result = await photosModel.searchPhotos({ query })
+      return result
     }
   },
   User: {
