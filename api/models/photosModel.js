@@ -154,13 +154,14 @@ class PhotosModel {
       collection: this.collection,
       aggregation: [{ $match: { approved: true } }, { $sort: { likes: -1, date: -1 } }]
     })
+    let finalIndex = result.length
     const position = result.find((photo, index) => {
-      if (photo.userId === userId) return index
+      if (userId.equals(ObjectId(photo.userId))) return finalIndex = index
     })
     const photos = result.slice(0, 10)
     return {
       photos,
-      position: position || result.length
+      position: finalIndex || result.length
     }
   }
 
