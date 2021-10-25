@@ -6,7 +6,8 @@ import { Position } from '../Position'
 
 export const ListOfMostVotedContainer = ({ data: {topTen} }) => {
   const photos = topTen ? topTen.photos : []
-  const position = topTen ? topTen.position : null
+  const position = topTen ? topTen.position : 0
+  console.log(`topTen.position`, topTen)
   return (
     <Wrapper>
       <Title>
