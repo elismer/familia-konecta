@@ -73,10 +73,11 @@ class PhotosModel {
         } }
       ]
     })
-    return photos.map((photo) => ({
+    const photosWhitLike = photos.map((photo) => ({
       ...photo,
       liked: favs.includes(photo._id.toString())
     }))
+    return shuffleArray(photosWhitLike)
   }
 
   async listComments () {
@@ -104,7 +105,7 @@ class PhotosModel {
       date: new Date()
     }
     await this.mongoDB.create(this.collection, photo)
-    return {...photo, liked:false }
+    return { ...photo, liked: false }
   }
 
   async approvePhoto ({ _id }) {
@@ -118,11 +119,12 @@ class PhotosModel {
 
   async removePhoto ({ _id, userId }) {
     const rm = promisify(require('fs').rm)
-    rm(path.join(__dirname,'../images',`${userId}.jpg`))
+    rm(path.join(__dirname, '../images', `${userId}.jpg`))
     await this.mongoDB.delete(this.collection, _id)
   }
 
-  async addComment ({ photoId, comment, userId, nombre, apellido }) {    await this.mongoDB.update(
+  async addComment ({ photoId, comment, userId, nombre, apellido }) {
+    await this.mongoDB.update(
       this.collection,
       photoId,
       { $push: { comments: { userId, comment, nombre, apellido, approved: false } } }
@@ -162,4 +164,15 @@ class PhotosModel {
     return myPhoto.ranking ? [...firstTen, ...[myPhoto]] : firstTen
   }
 }
+
+const shuffleArray = array => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+  return array
+}
+
 module.exports = PhotosModel
