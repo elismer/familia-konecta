@@ -2,7 +2,7 @@
 const termConditions = [
     {
         subtitle: "",
-        description: "DEL LUNES 25 AL DOMINGO 31 DE OCTUBRE INLUCIVE CELEBRAMOS LA SEMANA DE LA FAMILIA KONECTA"
+        description: "DEL LUNES 25 AL DOMINGO 31 DE OCTUBRE INCLUSIVE, CELEBRAMOS LA SEMANA DE LA FAMILIA KONECTA."
     },
     {
         subtitle: "1. OBJETIVO DEL CONCURSO",
@@ -23,8 +23,8 @@ const termConditions = [
         subtitle: "3. ¿CÓMO SUBIR TU FOTO?",
         description: `
             En el margen superior derecho de la pantalla encontraras un botón con un +.
-            Hacé click sobre el mismo y se abrirá en el navegador la selección de archivos que  te permitirá elegir la imagen que quieras publicar .
-            Además  contarás con la posibilidad de agregar una descripción de hasta 150 caracteres.
+            Hacé click sobre el mismo y se abrirá en el navegador la selección de archivos que  te permitirá elegir la imagen que quieras publicar.
+            Además tendras la posibilidad de agregar una descripción de hasta 150 caracteres.
             Para finalizar la acción solo debes hacer click en el botón subir.
             Una vez cargada la descripción y seleccionada la imagen se podrá hacer click en el botón subir.
             Las fotos y comentarios aparecerán en la plataforma en el transcurso máximo de 24 hs,  previa autorización del área de clima laboral. 
@@ -32,16 +32,16 @@ const termConditions = [
         `
     },
     {
-        subtitle: "4. PREMIO Y GANADORES",
+        subtitle: "4. PREMIOS Y GANADORES",
         description: `
-            Las 10 fotos con más “me gusta” ganan un kit de merchan:
-            Botella azul + barbijo + agenda y anotador + lapicera + matermo + kit matero konecta
-            Además, los 2 primeros puestos podrán elegir uno de estos súper combos:
-            Accesorios tecnológicos
-            Ropa deportiva
-            Artículos del hogar
-            El 1er puesto podrá elegir un combo de hasta $40.000
-            El 2do puesto podrá elegir un combo de hasta $20.000
+            Las 10 fotos con más “me gusta” ganan un kit de merchan:\n
+            Botella azul + barbijo + agenda y anotador + lapicera + matermo + kit matero konecta\n
+            Además, los 2 primeros puestos podrán elegir uno de estos súper combos: \n
+                • Accesorios tecnológicos \n
+                • Ropa deportiva \n
+                • Artículos del hogar \n
+            El 1er puesto podrá elegir un combo de hasta $40.000\n
+            El 2do puesto podrá elegir un combo de hasta $20.000\n
         `
     },
     {

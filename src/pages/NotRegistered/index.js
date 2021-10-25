@@ -29,7 +29,7 @@ export const NotRegistered = () => {
         </Fields>
         <Link to='/ttcc-open'>
           <LinkTo>
-            Conocé como participar
+            Conocé cómo participar
           </LinkTo>
         </Link>
       </Content>

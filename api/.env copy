@@ -1,6 +1,0 @@
-CORS=*
-DB_USER=elismerr
-DB_PASSWORD=2W47BHLfAF6BKk8S
-DB_HOST=elismer.q1i8p.mongodb.net
-DB_NAME=familiaKonecta
-JWT_SECRET=d6555fcb7f228f779f7515fca511d09f0b1e34fff2810d43452fa69e7e6412d7

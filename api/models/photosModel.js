@@ -122,9 +122,7 @@ class PhotosModel {
     await this.mongoDB.delete(this.collection, _id)
   }
 
-  async addComment ({ photoId, comment, userId, nombre, apellido }) {
-    console.log({userId})
-    await this.mongoDB.update(
+  async addComment ({ photoId, comment, userId, nombre, apellido }) {    await this.mongoDB.update(
       this.collection,
       photoId,
       { $push: { comments: { userId, comment, nombre, apellido, approved: false } } }
@@ -133,7 +131,6 @@ class PhotosModel {
   }
 
   async approveComment ({ _id, userId, comment }) {
-    console.log({ _id, userId, comment })
     await this.mongoDB.updateComment(
       this.collection,
       { _id: ObjectId(_id), 'comments.userId': ObjectId(userId), 'comments.comment': comment },
