@@ -152,16 +152,21 @@ class PhotosModel {
   async topTen ({ userId }) {
     const result = await this.mongoDB.aggregate({
       collection: this.collection,
-      aggregation: [{ $match: { approved: true } }, { $sort: { likes: -1 } }]
+      aggregation: [{ $match: { approved: true } }, { $sort: { likes: -1, date: -1 } }]
     })
-    const ranking = result.findIndex(photo => userId.equals(photo.userId))
-    let myPhoto = {}
-    if (ranking > 9) {
-      myPhoto = result[ranking]
-      myPhoto.pos = ranking + 1
+    const position = result.find((photo, index) => {
+      if (photo.userId === userId) return index
+    })
+    const photos = result.slice(0, 10)
+    return {
+      photos,
+      position: position || result.length
     }
-    const firstTen = result.slice(0, 10).map((photo, index) => ({ ...photo, pos: index + 1 }))
-    return myPhoto.ranking ? [...firstTen, ...[myPhoto]] : firstTen
+  }
+
+  async searchPhotos ({ query }) {
+    const result = await this.mongoDB.getAll(this.collection, { $text: { $search: query } })
+    return result
   }
 }
 
