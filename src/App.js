@@ -27,7 +27,7 @@ export default function () {
                     <Detail path='/detail/:id' />
                     <TermConditions path='/ttcc' />
                     {user.isAdmin && <Audit path='/approve' />}
-                    {!user.hasPhoto && <UploadPhotos path='/upload' />}
+                    <UploadPhotos path='/upload' />
                   </Router>
               </>
                 : <Router>

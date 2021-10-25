@@ -17,6 +17,10 @@ const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1518791841217-8f162f1e1
 export const PhotoCard = ({ id = 0, liked, likes = 0, src = DEFAULT_IMAGE, comments, description, nombre, apellido, date }) => {
   const [show, ref] = useNearScreen()
   const [state, setState] = useState(false)
+  const dateFormat = new Date(date)
+  const day = dateFormat.getDate()
+  const month = dateFormat.getMonth() + 1
+  const year = dateFormat.getFullYear()
   return (
     <Article ref={ref}>
       {show &&
@@ -40,7 +44,7 @@ export const PhotoCard = ({ id = 0, liked, likes = 0, src = DEFAULT_IMAGE, comme
           </ToggleContainer>
           <Capitalize>{nombre}{' '}{apellido}</Capitalize>
           { description && <p>{description}</p>}
-          {date && <Fecha>{new Date(date)}</Fecha>}
+          {date && <Fecha>{day}/{month}/{year}{' '}{new Date(date).toString().slice(16,-37)}</Fecha>}
           {comments && <CommentsList comments={comments} />}
           { state && <Comment photoId={id} close={setState} /> }
         </Fragment>

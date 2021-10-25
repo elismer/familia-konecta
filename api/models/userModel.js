@@ -25,7 +25,6 @@ class UserModel {
   }
 
   async hasFav ({ dni, photoId }) {
-    console.log({ dni, photoId })
     const user = await this.mongo.aggregate(
       { collection: this.collection,
         aggregation: [ { $match: { $and: [{ dni }, { favs: photoId }] } } ] }
@@ -53,8 +52,8 @@ class UserModel {
     await this.mongo.create(this.collection, user)
     return user
   }
-  async hasPhoto ({ _id }) {
-    return await this.mongo.update(this.collection, _id, { $set: { hasPhoto: true } })
+  async hasPhoto ({ _id, hasPhoto }) {
+    return await this.mongo.update(this.collection, _id, { $set: { hasPhoto } })
   }
 
   async find ({ dni }) {

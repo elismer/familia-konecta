@@ -27,8 +27,8 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req }) => {
-    const { dni, nombre, id, apellido } = req.user || {}
-    return { dni, nombre, id, apellido }
+    const { dni, nombre, id, apellido, isAdmin, hasPhoto } = req.user || {}
+    return { dni, nombre, id, apellido, isAdmin, hasPhoto }
   }
 })
 

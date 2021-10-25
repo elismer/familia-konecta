@@ -180,7 +180,6 @@ const resolvers = {
         }
         // get the updated photos model
         const actualPhoto = await photosModel.find({ id: photoId, favs: hasFav ? [] : [photoId] })
-        console.log(actualPhoto)
         return actualPhoto
       } catch (error) {
         console.error(error)
@@ -223,6 +222,7 @@ const resolvers = {
         throw new Error('Incorrect password')
       }
       const { _id: id, favs, ...data } = user
+      console.log(data)
       const token = jsonwebtoken.sign(
         { id, ...data },
         jwtSecret,
@@ -232,7 +232,8 @@ const resolvers = {
     },
 
     async addPhoto (parent, { input: { file, description } }, context) {
-      const { _id, nombre, apellido, dni } = await checkIsUserLogged(context)
+      const { _id, nombre, apellido, dni, hasPhoto } = await checkIsUserLogged(context)
+      if(hasPhoto) return {}
       const { createReadStream } = await file
 
       // Invoking the `createReadStream` will return a Readable Stream.
@@ -247,7 +248,7 @@ const resolvers = {
       try {
         await finishedPromise(out)
         const newPhoto = await photosModel.create({ userId: _id, description, src: `${config.imageBaseUrl}${_id}.jpg`, nombre, apellido, dni })
-        await userModel.hasPhoto({ _id })
+        await userModel.hasPhoto({ _id, hasPhoto: true })
         return newPhoto
       } catch (error) {
         console.error(error)
@@ -261,25 +262,30 @@ const resolvers = {
     },
 
     async approvePhoto (_, { input }, context) {
-      await checkIsUserLogged(context)
+      const {isAdmin} = await checkIsUserLogged(context)
+      if(!isAdmin) throw new Error('Unauthorized')
       await photosModel.approvePhoto({ _id: input })
       return true
     },
 
     async approveComment (_, { input: { photoId, userId, comment } }, context) {
-      await checkIsUserLogged(context)
+      const {isAdmin} = await checkIsUserLogged(context)
+      if(!isAdmin) throw new Error('Unauthorized')
       await photosModel.approveComment({ _id: photoId, userId, comment })
       return true
     },
 
     async removePhoto (_, { input: { photoId, userId } }, context) {
-      await checkIsUserLogged(context)
+      const {isAdmin} = await checkIsUserLogged(context)
+      if(!isAdmin) throw new Error('Unauthorized')
       await photosModel.removePhoto({ _id: photoId, userId })
+      await userModel.hasPhoto({ _id, hasPhoto: false })
       return true
     },
 
     async removeComment (_, { input: { photoId, userId, comment } }, context) {
-      await checkIsUserLogged(context)
+      const {isAdmin} = await checkIsUserLogged(context)
+      if(!isAdmin) throw new Error('Unauthorized')
       await photosModel.removeComment({ _id: photoId, userId, comment })
       return true
     }
