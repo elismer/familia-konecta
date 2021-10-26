@@ -4,17 +4,11 @@ import { NavBar } from '../NavBar'
 import { Search } from '../Search'
 import { Wrapper } from './styles'
 
-export const Banner = () => {
-
-  const [searchTerm, setSearchTerm] = useState('');
-
+export const Banner = ({ value, setValue, handleSend }) => {
   return (
     <Wrapper>
       <Logo />
-      {/* <Search
-          searchTerm={searchTerm}
-          onChangeInput={(e) => setSearchTerm(e.target.value)}
-        /> */}
+      <input value={value} onChange={({ target }) => setValue(target.value)} onKeyDown={handleSend} placeholder='Encontrame 👪' />
       <NavBar />
     </Wrapper>
   )

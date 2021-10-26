@@ -27,8 +27,8 @@ const Provider = ({ children }) => {
       window.sessionStorage.removeItem('token')
     },
 
-    hasPhoto: ()=>{
-      setUser(prev=>({...prev,hasPhoto:true}))
+    hasPhoto: () => {
+      setUser(prev => ({ ...prev, hasPhoto: true }))
     }
   }
 

@@ -48,10 +48,12 @@ class PhotosModel {
     return true
   }
 
-  async list ({ approved, favs = [] }) {
+  async list ({ approved, favs = [], query }) {
     const photos = await this.mongoDB.aggregate({
       collection: this.collection,
       aggregation: [
+        // eslint-disable-next-line standard/array-bracket-even-spacing
+        ...query ? [{ $match: { $text: { $search: query } } } ] : [],
         { $match: { approved } },
         { $project: {
           'userId': 1,
@@ -154,14 +156,17 @@ class PhotosModel {
       collection: this.collection,
       aggregation: [{ $match: { approved: true } }, { $sort: { likes: -1, date: -1 } }]
     })
-    let finalIndex = result.length
-    const position = result.find((photo, index) => {
-      if (userId.equals(ObjectId(photo.userId))) return finalIndex = index
+    let position = 0
+    result.find((photo, index) => {
+      if (userId.equals(ObjectId(photo.userId))) {
+        position = index
+        return true
+      }
     })
     const photos = result.slice(0, 10)
     return {
       photos,
-      position: finalIndex || result.length
+      position: position || result.length
     }
   }
 

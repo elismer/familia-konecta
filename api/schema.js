@@ -66,13 +66,17 @@ const typeDefs = gql`
     position: Int
   }
 
+  input FilterQuery{
+    approved: Boolean
+    query: String
+  }
+
   type Query {
     favs: [Photo]
-    photos(approved: Boolean): [Photo]
+    photos(filter: FilterQuery!): [Photo]
     commentsAudit:[PhotoAudit]
     photo(id: ID!): Photo
     topTen: TopTenResult
-    search(query: String!): [Photo]
   }
 
 
@@ -285,7 +289,7 @@ const resolvers = {
       const { isAdmin } = await checkIsUserLogged(context)
       if (!isAdmin) throw new Error('Unauthorized')
       await photosModel.removePhoto({ _id: photoId, userId })
-      await userModel.hasPhoto({ _id, hasPhoto: false })
+      await userModel.hasPhoto({ _id: userId, hasPhoto: false })
       return true
     },
 
@@ -312,19 +316,15 @@ const resolvers = {
       const favsUser = await photosModel.find({ id, favs })
       return favsUser
     },
-    async photos (_, { approved }, context) {
+    async photos (_, { filter: { approved, query } }, context) {
       const favs = await tryGetFavsFromUserLogged(context)
-      return await photosModel.list({ approved, favs })
+      const photos = await photosModel.list({ approved, favs, query })
+      return photos
     },
     async topTen (_, __, context) {
       const { _id } = await checkIsUserLogged(context, 'topTen')
       const topTenResult = await photosModel.topTen({ userId: _id })
       return topTenResult
-    },
-    async search (_, {query}, context) {
-      await checkIsUserLogged(context)
-      const result = await photosModel.searchPhotos({ query })
-      return result
     }
   },
   User: {

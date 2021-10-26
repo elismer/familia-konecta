@@ -4,10 +4,9 @@ import { Wrapper, Title, Item } from './styles'
 import { PhotoCard } from '../PhotoCard'
 import { Position } from '../Position'
 
-export const ListOfMostVotedContainer = ({ data: {topTen} }) => {
+export const ListOfMostVotedContainer = ({ data: { topTen } }) => {
   const photos = topTen ? topTen.photos : []
   const position = topTen ? topTen.position : 0
-  console.log(`topTen.position`, topTen)
   return (
     <Wrapper>
       <Title>
@@ -17,7 +16,7 @@ export const ListOfMostVotedContainer = ({ data: {topTen} }) => {
         <PhotoCard {...photo} />
       </Item>)
       }
-      <Position value={ position } />
+      <Position value={position} />
     </Wrapper>
   )
 }
