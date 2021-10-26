@@ -16,6 +16,11 @@ export default function () {
   const handleSend = ({ key }) => {
     if (key === 'Enter') setQuery(value)
   }
+
+  const handleClick = () => {
+    setQuery(value)
+  }
+
   return (
     <React.Suspense fallback={<div />}>
       <GlobalStyles />
@@ -25,7 +30,7 @@ export default function () {
             return (
               isAuth
                 ? <>
-                  <Banner value={value} setValue={setValue} handleSend={handleSend} />
+                  <Banner value={value} setValue={setValue} handleSend={handleSend} handleClick={handleClick} />
                   <Router>
                     <Home path='/' query={query} />
                     <Home path='/pet/:id' />

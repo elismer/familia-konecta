@@ -5,11 +5,11 @@ import { PhotoCard } from '../PhotoCard'
 export const ListOfPhotoCardsComponent = ({ data: { photos = [] } }) => {
   return (
     <List>
-      {photos.map(photo => <Item key={photo.id}>
-        <PhotoCard {...photo} />
-      </Item>)
-      }
+      {photos.map((photo) => (
+        <Item key={photo.id}>
+          <PhotoCard {...photo} />
+        </Item>
+      ))}
     </List>
-
   )
 }

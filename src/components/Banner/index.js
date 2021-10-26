@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Logo } from '../Logo'
 import { NavBar } from '../NavBar'
 import { Search } from '../Search'
 import { Wrapper } from './styles'
 
-export const Banner = ({ value, setValue, handleSend }) => {
+export const Banner = ({ value, setValue, handleSend, handleClick }) => {
   return (
     <Wrapper>
       <Logo />
-      <input value={value} onChange={({ target }) => setValue(target.value)} onKeyDown={handleSend} placeholder='Encontrame 👪' />
+      <Search
+        searchTerm={value}
+        onChangeInput={({ target }) => setValue(target.value)}
+        onKeyDown={handleSend}
+        onClick={handleClick}
+      />
       <NavBar />
     </Wrapper>
   )
