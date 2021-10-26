@@ -12,6 +12,14 @@ query getSinglePhoto($id:ID!) {
     likes
     userId
     liked
+    date
+    comments{
+      comment
+      nombre
+      apellido
+    }
+    nombre
+    apellido
   }
 }`
 
