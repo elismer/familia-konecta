@@ -48,10 +48,12 @@ class PhotosModel {
     return true
   }
 
-  async list ({ approved, favs = [] }) {
+  async list ({ approved, favs = [], query }) {
     const photos = await this.mongoDB.aggregate({
       collection: this.collection,
       aggregation: [
+        // eslint-disable-next-line standard/array-bracket-even-spacing
+        ...query ? [{ $match: { $text: { $search: query } } } ] : [],
         { $match: { approved } },
         { $project: {
           'userId': 1,
@@ -73,10 +75,11 @@ class PhotosModel {
         } }
       ]
     })
-    return photos.map((photo) => ({
+    const photosWhitLike = photos.map((photo) => ({
       ...photo,
       liked: favs.includes(photo._id.toString())
     }))
+    return shuffleArray(photosWhitLike)
   }
 
   async listComments () {
@@ -104,7 +107,7 @@ class PhotosModel {
       date: new Date()
     }
     await this.mongoDB.create(this.collection, photo)
-    return {...photo, liked:false }
+    return { ...photo, liked: false }
   }
 
   async approvePhoto ({ _id }) {
@@ -118,12 +121,11 @@ class PhotosModel {
 
   async removePhoto ({ _id, userId }) {
     const rm = promisify(require('fs').rm)
-    rm(path.join(__dirname,'../images',`${userId}.jpg`))
+    rm(path.join(__dirname, '../images', `${userId}.jpg`))
     await this.mongoDB.delete(this.collection, _id)
   }
 
   async addComment ({ photoId, comment, userId, nombre, apellido }) {
-    console.log({userId})
     await this.mongoDB.update(
       this.collection,
       photoId,
@@ -133,7 +135,6 @@ class PhotosModel {
   }
 
   async approveComment ({ _id, userId, comment }) {
-    console.log({ _id, userId, comment })
     await this.mongoDB.updateComment(
       this.collection,
       { _id: ObjectId(_id), 'comments.userId': ObjectId(userId), 'comments.comment': comment },
@@ -153,16 +154,36 @@ class PhotosModel {
   async topTen ({ userId }) {
     const result = await this.mongoDB.aggregate({
       collection: this.collection,
-      aggregation: [{ $match: { approved: true } }, { $sort: { likes: -1 } }]
+      aggregation: [{ $match: { approved: true } }, { $sort: { likes: -1, date: -1 } }]
     })
-    const ranking = result.findIndex(photo => userId.equals(photo.userId))
-    let myPhoto = {}
-    if (ranking > 9) {
-      myPhoto = result[ranking]
-      myPhoto.pos = ranking + 1
+    let position = 0
+    result.find((photo, index) => {
+      if (userId.equals(ObjectId(photo.userId))) {
+        position = index
+        return true
+      }
+    })
+    const photos = result.slice(0, 10)
+    return {
+      photos,
+      position: position || result.length
     }
-    const firstTen = result.slice(0, 10).map((photo, index) => ({ ...photo, pos: index + 1 }))
-    return myPhoto.ranking ? [...firstTen, ...[myPhoto]] : firstTen
+  }
+
+  async searchPhotos ({ query }) {
+    const result = await this.mongoDB.getAll(this.collection, { $text: { $search: query } })
+    return result
   }
 }
+
+const shuffleArray = array => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const temp = array[i]
+    array[i] = array[j]
+    array[j] = temp
+  }
+  return array
+}
+
 module.exports = PhotosModel

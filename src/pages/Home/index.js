@@ -4,14 +4,14 @@ import { Helmet } from 'react-helmet'
 import { FavList, Wrapper } from './styles'
 import { ListOfMostVoted } from '../../containers/ListOfMostVoted'
 
-const HomePage = ({ id }) => {
+const HomePage = ({ query }) => {
   return (
     <Fragment>
       <Helmet>
         <title>Familia Konecta</title>
       </Helmet>
       <Wrapper>
-        <ListOfPhotoCards />
+        <ListOfPhotoCards query={query} />
         <FavList>
           <ListOfMostVoted />
         </FavList>
@@ -21,5 +21,5 @@ const HomePage = ({ id }) => {
 }
 
 export const Home = React.memo(HomePage, (prevProps, nextProps) => {
-  return prevProps.id === nextProps.id
+  return prevProps.query === nextProps.query
 })

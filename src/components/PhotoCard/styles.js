@@ -28,7 +28,8 @@ export const Img = styled.img`
   object-fit: cover;
   position: absolute;
   top: 0;
-  width: 100%;
+  left: 50%;
+  transform: translate(-50%, 0px);
 `
 
 export const ToggleContainer = styled.div`

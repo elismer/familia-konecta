@@ -12,7 +12,8 @@ export const ApproveComments = ({ data: { commentsAudit = {} } }) => {
       <Container>
         {
           commentsAudit.length
-            ? commentsAudit.map((photo, index) => {console.log(photo);return(<Item key={index}>
+            ? commentsAudit.map((photo, index) => {
+              return(<Item key={index}>
               <TextArea disabled>
                 {photo.comments.comment}
               </TextArea>

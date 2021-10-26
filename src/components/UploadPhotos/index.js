@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { AddPhotoMutation } from '../../containers/AddPhotoMutation'
 import { ButtonTemplate, Text } from '../ButtonStandard/styles'
 import { Content, Wrapper, Button, ButtonContainer, Title, ImgWrapper, Img, InputFile, Subtitle, InputTextArea, Counter, InputConteiner } from './styles'
@@ -8,7 +8,8 @@ export const UploadPhotos = () => {
   const [file, setFile] = useState()
   const [preview, setPreview] = useState()
   const [description, setDescription] = useState('')
-
+  const [loading, setLoading] = useState(false)
+  const [uploaded,setUploaded] = useState(false)
   const buildImgTag = () => {
     let imgTag = null
     if (uri !== null) {
@@ -32,16 +33,13 @@ export const UploadPhotos = () => {
 
   const handleChange = ({ target }) => {
     readURI(target)
-    setFile(target.files && target.files[0])
+    setFile(target.files && target.files[0]) 
   }
 
   const clearImage = () => {
     window.location.reload()
   }
 
-  useEffect(() => {
-    setPreview(buildImgTag())
-  }, [buildImgTag])
 
   return (
     <Wrapper>
@@ -56,13 +54,13 @@ export const UploadPhotos = () => {
           <InputFile
             id='upload'
             name='upload'
+            label='Elegir archivo'
             type='file'
             onChange={handleChange}
             accept="image/*"
           />
-          {preview}
           <Subtitle>
-            Ingrese una description
+            Ingrese una descripción
           </Subtitle>
           <InputTextArea
             onChange={e => setDescription(e.target.value)}
@@ -85,13 +83,19 @@ export const UploadPhotos = () => {
           <AddPhotoMutation>
             {addPhoto => {
               const handleUploadClick = () => {
-                console.log(file)
-                addPhoto({ variables: { input: { file, description: description } } })
+                if (uploaded) return alert('Foto subida')
+                setLoading(true)
+                addPhoto({ variables: { input: { file, description: description } } }).then((data)=>{
+                  setUploaded(true)
+                  setLoading(false)
+                  alert('Foto subida')
+                })
               }
-              return (
-                <ButtonTemplate onClick={handleUploadClick}>
+             return (
+              loading ? <p>Cargando...</p> : 
+              (<ButtonTemplate onClick={handleUploadClick}>
                   <Text>Subir</Text>
-                </ButtonTemplate>
+              </ButtonTemplate>)
               )
             }
             }

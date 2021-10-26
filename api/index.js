@@ -19,7 +19,6 @@ const auth = jwt({
   credentialsRequired: false
 })
 
-
 const server = new ApolloServer({
   introspection: true, // do this only for dev purposes
   playground: true, // do this only for dev purposes
@@ -27,8 +26,8 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req }) => {
-    const { dni, nombre, id, apellido } = req.user || {}
-    return { dni, nombre, id, apellido }
+    const { dni, nombre, id, apellido, isAdmin, hasPhoto } = req.user || {}
+    return { dni, nombre, id, apellido, isAdmin, hasPhoto }
   }
 })
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Router } from '@reach/router'
 import { GlobalStyles } from './styles/GlobalStyles'
 import { Home } from './pages/Home'
@@ -11,6 +11,11 @@ import { UploadPhotos } from './components/UploadPhotos'
 import { Audit } from './components/Audit'
 
 export default function () {
+  const [value, setValue] = useState('')
+  const [query, setQuery] = useState('')
+  const handleSend = ({ key }) => {
+    if (key === 'Enter') setQuery(value)
+  }
   return (
     <React.Suspense fallback={<div />}>
       <GlobalStyles />
@@ -20,14 +25,14 @@ export default function () {
             return (
               isAuth
                 ? <>
-                  <Banner />
+                  <Banner value={value} setValue={setValue} handleSend={handleSend} />
                   <Router>
-                    <Home path='/' />
+                    <Home path='/' query={query} />
                     <Home path='/pet/:id' />
                     <Detail path='/detail/:id' />
                     <TermConditions path='/ttcc' />
                     {user.isAdmin && <Audit path='/approve' />}
-                    {!user.hasPhoto && <UploadPhotos path='/upload' />}
+                    <UploadPhotos path='/upload' />
                   </Router>
               </>
                 : <Router>
