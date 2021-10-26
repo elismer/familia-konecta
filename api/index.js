@@ -19,7 +19,6 @@ const auth = jwt({
   credentialsRequired: false
 })
 
-
 const server = new ApolloServer({
   introspection: true, // do this only for dev purposes
   playground: true, // do this only for dev purposes
