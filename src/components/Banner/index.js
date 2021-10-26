@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Logo } from '../Logo'
 import { NavBar } from '../NavBar'
+import { Search } from '../Search'
 import { Wrapper } from './styles'
 
 export const Banner = ({ value, setValue, handleSend }) => {

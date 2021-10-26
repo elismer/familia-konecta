@@ -9,7 +9,7 @@ import { setContext } from 'apollo-link-context'
 import Context from './Context'
 import App from './App'
 
-const link = createUploadLink({ uri: 'http://localhost:3500/graphql' })
+const link = createUploadLink({ uri: 'http://api.familiakonecta.com.ar/graphql' })
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
   const token = window.sessionStorage.getItem('token')
